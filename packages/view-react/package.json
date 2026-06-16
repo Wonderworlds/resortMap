@@ -1,0 +1,19 @@
+{
+  "name": "@resort-map/view-react",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "build": "bun build src/index.ts --external react --external react-dom --outdir dist"
+  },
+  "dependencies": {
+    "@resort-map/view-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

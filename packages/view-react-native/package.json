@@ -1,0 +1,19 @@
+{
+  "name": "@resort-map/view-react-native",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": {
+    "@resort-map/view-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-native": "*",
+    "react-native-svg": "catalog:",
+    "react-native-gesture-handler": "catalog:",
+    "react-native-reanimated": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

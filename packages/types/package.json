@@ -1,0 +1,15 @@
+{
+  "name": "@resort-map/types",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./fixtures/*": "./src/fixtures/*"
+  },
+  "scripts": {
+    "build": "tsc --emitDeclarationOnly --outDir dist"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

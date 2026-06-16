@@ -1,11 +1,21 @@
 {
-  "name": "resortmap",
-  "module": "index.ts",
-  "type": "module",
+  "name": "resort-map",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "build": "bun run --filter '*' build",
+    "test": "bun test"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
-  "peerDependencies": {
-    "typescript": "^5"
+  "catalog": {
+    "typescript": "^5.4.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-native-svg": "^15.8.0",
+    "react-native-gesture-handler": "^2.20.0",
+    "react-native-reanimated": "^3.16.0",
+    "zustand": "^4.5.0"
   }
 }

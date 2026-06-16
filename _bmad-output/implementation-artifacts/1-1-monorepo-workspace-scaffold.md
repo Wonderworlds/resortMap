@@ -1,6 +1,10 @@
+---
+baseline_commit: 8eea14fe1bf3005cd48bd4511b01251021862d7a
+---
+
 # Story 1.1: Monorepo Workspace Scaffold
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -20,46 +24,46 @@ so that `bun install` and `bun test` run cleanly from the workspace root as a ba
 
 ## Tasks / Subtasks
 
-- [ ] Transform root `package.json` into workspace root (AC: 1, 4)
-  - [ ] Add `"workspaces": ["packages/*"]`
-  - [ ] Add `"scripts"` section with `build` and `test` (see Dev Notes)
-  - [ ] Add `"catalog"` section with shared dep versions
-  - [ ] Remove `"module"`, `"type"`, `"peerDependencies"` fields (not appropriate for workspace root)
-  - [ ] Keep `"@types/bun"` in devDependencies at root level
-- [ ] Update `.gitignore` to add `packages/*/dist/` (M2)
-- [ ] Create `tsconfig.base.json` at root (AC: 3)
-  - [ ] Derive from existing `tsconfig.json` but target ES2022, add `declaration: true`, remove `noEmit`
-- [ ] Delete root `index.ts` (AC: 1)
-  - [ ] It's a `console.log` placeholder from Bun init — no longer needed
-- [ ] Scaffold `packages/types/` — `@resort-map/types` (AC: 1, 2, 3)
-  - [ ] `package.json` with name, version, exports (`.` + `./fixtures/*`), build script, no deps
-  - [ ] `tsconfig.json` extending `../../tsconfig.base.json`
-  - [ ] `src/index.ts` — placeholder export
-  - [ ] `src/fixtures/.gitkeep` — preserves empty directory in git (populated in Story 1.3)
-- [ ] Scaffold `packages/builder-core/` — `@resort-map/builder-core` (AC: 1, 2, 3)
-  - [ ] `package.json` with exports, build script (`bun build src/index.ts --target node`), `"@resort-map/types": "workspace:*"` dep, `"typescript": "catalog:"` devDep
-  - [ ] `tsconfig.json` extending `../../tsconfig.base.json`
-  - [ ] `src/index.ts` — placeholder export
-- [ ] Scaffold `packages/view-core/` — `@resort-map/view-core` (AC: 1, 2, 3)
-  - [ ] Same pattern as builder-core but build script uses `--target browser`
-- [ ] Scaffold `packages/builder-react/` — `@resort-map/builder-react` (AC: 1, 3)
-  - [ ] `package.json` — NO `"exports"` field (it's a standalone app, not a library)
-  - [ ] Peer deps: `"react": "catalog:"`, `"react-dom": "catalog:"`
-  - [ ] `"@resort-map/builder-core": "workspace:*"` dep
-  - [ ] `tsconfig.json` extending `../../tsconfig.base.json` with `"noEmit": true` override
-  - [ ] `index.ts` — minimal `Bun.serve()` placeholder (see Dev Notes)
-  - [ ] `index.html` — minimal HTML with script import
-  - [ ] `src/main.tsx` — placeholder React root
-- [ ] Scaffold `packages/view-react/` — `@resort-map/view-react` (AC: 1, 2, 3)
-  - [ ] `package.json` with exports, build script (`bun build src/index.ts --external react --external react-dom`), peer deps `react`+`react-dom`, `"@resort-map/view-core": "workspace:*"` dep
-  - [ ] `tsconfig.json` extending `../../tsconfig.base.json`
-  - [ ] `src/index.ts` — placeholder export
-- [ ] Scaffold `packages/view-react-native/` — `@resort-map/view-react-native` (AC: 1, 2, 3)
-  - [ ] `package.json` with exports, peer deps including `react-native-svg`, `react-native-gesture-handler`, `react-native-reanimated`
-  - [ ] `tsconfig.json` extending `../../tsconfig.base.json` **with `"jsx": "react-native"` override**
-  - [ ] `src/index.ts` — placeholder export
-- [ ] Run `bun install` from root and verify clean exit (AC: 1)
-- [ ] Run `bun test` from root and verify exit 0 (AC: 1)
+- [x] Transform root `package.json` into workspace root (AC: 1, 4)
+  - [x] Add `"workspaces": ["packages/*"]`
+  - [x] Add `"scripts"` section with `build` and `test` (see Dev Notes)
+  - [x] Add `"catalog"` section with shared dep versions
+  - [x] Remove `"module"`, `"type"`, `"peerDependencies"` fields (not appropriate for workspace root)
+  - [x] Keep `"@types/bun"` in devDependencies at root level
+- [x] Update `.gitignore` to add `packages/*/dist/` (M2)
+- [x] Create `tsconfig.base.json` at root (AC: 3)
+  - [x] Derive from existing `tsconfig.json` but target ES2022, add `declaration: true`, remove `noEmit`
+- [x] Delete root `index.ts` (AC: 1)
+  - [x] It's a `console.log` placeholder from Bun init — no longer needed
+- [x] Scaffold `packages/types/` — `@resort-map/types` (AC: 1, 2, 3)
+  - [x] `package.json` with name, version, exports (`.` + `./fixtures/*`), build script, no deps
+  - [x] `tsconfig.json` extending `../../tsconfig.base.json`
+  - [x] `src/index.ts` — placeholder export
+  - [x] `src/fixtures/.gitkeep` — preserves empty directory in git (populated in Story 1.3)
+- [x] Scaffold `packages/builder-core/` — `@resort-map/builder-core` (AC: 1, 2, 3)
+  - [x] `package.json` with exports, build script (`bun build src/index.ts --target node`), `"@resort-map/types": "workspace:*"` dep, `"typescript": "catalog:"` devDep
+  - [x] `tsconfig.json` extending `../../tsconfig.base.json`
+  - [x] `src/index.ts` — placeholder export
+- [x] Scaffold `packages/view-core/` — `@resort-map/view-core` (AC: 1, 2, 3)
+  - [x] Same pattern as builder-core but build script uses `--target browser`
+- [x] Scaffold `packages/builder-react/` — `@resort-map/builder-react` (AC: 1, 3)
+  - [x] `package.json` — NO `"exports"` field (it's a standalone app, not a library)
+  - [x] Peer deps: `"react": "catalog:"`, `"react-dom": "catalog:"`
+  - [x] `"@resort-map/builder-core": "workspace:*"` dep
+  - [x] `tsconfig.json` extending `../../tsconfig.base.json` with `"noEmit": true` override
+  - [x] `index.ts` — minimal `Bun.serve()` placeholder (see Dev Notes)
+  - [x] `index.html` — minimal HTML with script import
+  - [x] `src/main.tsx` — placeholder React root
+- [x] Scaffold `packages/view-react/` — `@resort-map/view-react` (AC: 1, 2, 3)
+  - [x] `package.json` with exports, build script (`bun build src/index.ts --external react --external react-dom`), peer deps `react`+`react-dom`, `"@resort-map/view-core": "workspace:*"` dep
+  - [x] `tsconfig.json` extending `../../tsconfig.base.json`
+  - [x] `src/index.ts` — placeholder export
+- [x] Scaffold `packages/view-react-native/` — `@resort-map/view-react-native` (AC: 1, 2, 3)
+  - [x] `package.json` with exports, peer deps including `react-native-svg`, `react-native-gesture-handler`, `react-native-reanimated`
+  - [x] `tsconfig.json` extending `../../tsconfig.base.json` **with `"jsx": "react-native"` override**
+  - [x] `src/index.ts` — placeholder export
+- [x] Run `bun install` from root and verify clean exit (AC: 1)
+- [x] Run `bun test` from root and verify exit 0 (AC: 1)
 
 ## Dev Notes
 
@@ -436,10 +440,54 @@ resortMap/                        ← already exists
 
 ### Agent Model Used
 
-_to be filled by dev agent_
+claude-sonnet-4-6
 
 ### Debug Log References
 
+- `bun test` exits non-zero (exit 1) with zero test files on Bun v1.3.14; Dev Notes anticipated this and instructed adding a placeholder test in `packages/types/src/__tests__/placeholder.test.ts`.
+- Bun 1.x workspace symlinks are placed in each package's own `node_modules/@resort-map/` (e.g. `packages/builder-core/node_modules/@resort-map/types -> ../../../types`) rather than at the root `node_modules/@resort-map/`. `bun pm ls` confirms all 6 packages are registered as workspace entries at the root level.
+
 ### Completion Notes List
 
+- Transformed root `package.json` into workspace root with `workspaces`, `scripts`, `catalog`, and `@types/bun` devDep only.
+- Created `tsconfig.base.json` with ES2022 target, bundler module resolution, `declaration: true`, and all strict flags.
+- Deleted root `index.ts` placeholder.
+- Scaffolded all 6 packages (`types`, `builder-core`, `view-core`, `builder-react`, `view-react`, `view-react-native`) with correct `package.json`, `tsconfig.json`, and placeholder `src/index.ts`.
+- `builder-react` correctly has no `"exports"` field and uses `noEmit: true` + `allowImportingTsExtensions: true` in its tsconfig.
+- `view-react-native` tsconfig includes `"jsx": "react-native"` override.
+- All inter-package references use `workspace:*`; catalog deps use `catalog:` protocol.
+- Added placeholder test to satisfy `bun test` exit-0 requirement on Bun v1.3.14.
+- `bun install` and `bun test` both exit 0 from workspace root.
+
 ### File List
+
+- `.gitignore` (modified)
+- `package.json` (modified)
+- `tsconfig.base.json` (created)
+- `index.ts` (deleted)
+- `packages/types/package.json` (created)
+- `packages/types/tsconfig.json` (created)
+- `packages/types/src/index.ts` (created)
+- `packages/types/src/fixtures/.gitkeep` (created)
+- `packages/types/src/__tests__/placeholder.test.ts` (created)
+- `packages/builder-core/package.json` (created)
+- `packages/builder-core/tsconfig.json` (created)
+- `packages/builder-core/src/index.ts` (created)
+- `packages/view-core/package.json` (created)
+- `packages/view-core/tsconfig.json` (created)
+- `packages/view-core/src/index.ts` (created)
+- `packages/builder-react/package.json` (created)
+- `packages/builder-react/tsconfig.json` (created)
+- `packages/builder-react/index.ts` (created)
+- `packages/builder-react/index.html` (created)
+- `packages/builder-react/src/main.tsx` (created)
+- `packages/view-react/package.json` (created)
+- `packages/view-react/tsconfig.json` (created)
+- `packages/view-react/src/index.ts` (created)
+- `packages/view-react-native/package.json` (created)
+- `packages/view-react-native/tsconfig.json` (created)
+- `packages/view-react-native/src/index.ts` (created)
+
+## Change Log
+
+- 2026-06-16: Story 1.1 implemented — Bun monorepo workspace scaffolded with 6 packages, root config files, and verified `bun install` + `bun test` (exit 0).
