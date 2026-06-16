@@ -1,0 +1,9 @@
+export const ErrorCode = {
+  GWMAP_PARSE_ERROR: 'GWMAP_PARSE_ERROR',
+  GWMAP_VERSION_MISMATCH: 'GWMAP_VERSION_MISMATCH',
+  ROUTE_NOT_FOUND: 'ROUTE_NOT_FOUND',
+  INVALID_POSITION: 'INVALID_POSITION',
+  INVALID_NODE_REF: 'INVALID_NODE_REF',
+} as const;
+
+export type ErrorCodeValue = typeof ErrorCode[keyof typeof ErrorCode];
