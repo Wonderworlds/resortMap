@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-16
-last_updated: 2026-06-17
+last_updated: 2026-06-17 # updated for story 2-2
 project: resortMap
 project_key: NOKEY
 tracking_system: file-system
@@ -55,9 +55,9 @@ development_status:
   # ─────────────────────────────────────────────────────────
   # Epic 2: Map File Authoring (builder-core + builder-react)
   # ─────────────────────────────────────────────────────────
-  epic-2: backlog
-  2-1-builder-core-authoring-operations-and-serialization: backlog
-  2-2-builder-react-app-skeleton-and-zustand-store: backlog
+  epic-2: in-progress
+  2-1-builder-core-authoring-operations-and-serialization: review
+  2-2-builder-react-app-skeleton-and-zustand-store: review
   2-3-builder-react-mapcanvas-image-loading-and-poi-placement: backlog
   2-4-builder-react-road-drawing-node-and-edge-placement: backlog
   2-5-builder-react-sidebar-property-editor: backlog
