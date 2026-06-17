@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "map": {
+    "backgroundImageUrl": "https://example.com/sample-map.png",
+    "center": { "x": 512, "y": 384 },
+    "scale": 0.1
+  },
+  "pois": [
+    {
+      "id": "poi-001",
+      "label": "Main Restaurant",
+      "position": { "x": 320, "y": 210 },
+      "tags": ["restaurant"],
+      "nodeId": "node-001"
+    }
+  ],
+  "graph": {
+    "nodes": [
+      { "id": "node-001", "position": { "x": 100, "y": 200 } },
+      { "id": "node-002", "position": { "x": 300, "y": 200 } }
+    ],
+    "edges": [
+      { "from": "node-001", "to": "node-002" }
+    ]
+  }
+}

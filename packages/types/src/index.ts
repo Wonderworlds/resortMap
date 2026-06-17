@@ -4,3 +4,5 @@ export { ErrorCode } from './errors.ts';
 export type { ErrorCodeValue } from './errors.ts';
 
 export type { ViewerStatus, PoiFilterOptions, ViewerState, ViewerAction } from './viewerTypes.ts';
+
+export { validateGwmap } from './validate.ts';

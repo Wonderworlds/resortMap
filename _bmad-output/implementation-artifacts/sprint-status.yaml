@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-16
-last_updated: 2026-06-16
+last_updated: 2026-06-17
 project: resortMap
 project_key: NOKEY
 tracking_system: file-system
@@ -49,7 +49,7 @@ development_status:
   epic-1: in-progress
   1-1-monorepo-workspace-scaffold: review
   1-2-resort-map-types-shared-types-and-errorcode: review
-  1-3-resort-map-types-validateGwmap-and-fixtures: backlog
+  1-3-resort-map-types-validateGwmap-and-fixtures: review
   epic-1-retrospective: optional
 
   # ─────────────────────────────────────────────────────────
