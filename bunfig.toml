@@ -1,0 +1,2 @@
+[test]
+preload = ["./packages/view-react/src/__tests__/setup.ts"]

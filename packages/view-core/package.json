@@ -10,6 +10,7 @@
     "@resort-map/types": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@resort-map/builder-core": "workspace:*"
   }
 }

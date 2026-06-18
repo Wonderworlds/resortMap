@@ -234,6 +234,46 @@ describe('addEdge / removeEdge', () => {
   });
 });
 
+describe('removeNode — stale edge selection fix', () => {
+  function setupTwoNodesAndEdge() {
+    useMapStore.getState().initMap(validMeta);
+    useMapStore.getState().addNode({ position: { x: 0, y: 0 } });
+    useMapStore.getState().addNode({ position: { x: 50, y: 50 } });
+    const nodes = useMapStore.getState().mapConfig!.graph.nodes;
+    const nodeA = nodes[0]!;
+    const nodeB = nodes[1]!;
+    useMapStore.getState().addEdge({ from: nodeA.id, to: nodeB.id });
+    return { nodeA, nodeB };
+  }
+
+  test('clears selectedItemId when removed node is the "from" end of selected edge', () => {
+    const { nodeA, nodeB } = setupTwoNodesAndEdge();
+    const edgeKey = `${nodeA.id}:${nodeB.id}`;
+    useMapStore.setState({ selectedItemId: edgeKey });
+    useMapStore.getState().removeNode(nodeA.id);
+    expect(useMapStore.getState().selectedItemId).toBeNull();
+    expect(useMapStore.getState().mapConfig?.graph.edges).toHaveLength(0);
+  });
+
+  test('clears selectedItemId when removed node is the "to" end of selected edge', () => {
+    const { nodeA, nodeB } = setupTwoNodesAndEdge();
+    const edgeKey = `${nodeA.id}:${nodeB.id}`;
+    useMapStore.setState({ selectedItemId: edgeKey });
+    useMapStore.getState().removeNode(nodeB.id);
+    expect(useMapStore.getState().selectedItemId).toBeNull();
+    expect(useMapStore.getState().mapConfig?.graph.edges).toHaveLength(0);
+  });
+
+  test('preserves selectedItemId of an unrelated element when node is removed', () => {
+    const { nodeA } = setupTwoNodesAndEdge();
+    useMapStore.getState().addPoi({ label: 'X', position: { x: 5, y: 5 }, tags: [] });
+    const poiId = useMapStore.getState().mapConfig!.pois[0]!.id;
+    useMapStore.setState({ selectedItemId: poiId });
+    useMapStore.getState().removeNode(nodeA.id);
+    expect(useMapStore.getState().selectedItemId).toBe(poiId);
+  });
+});
+
 describe('undoStack cap (50 entries)', () => {
   test('undoStack stays at 50 after 55 mutations', () => {
     useMapStore.getState().initMap(validMeta);
@@ -241,5 +281,39 @@ describe('undoStack cap (50 entries)', () => {
       useMapStore.getState().addPoi({ label: `P${i}`, position: { x: i, y: i }, tags: [] });
     }
     expect(useMapStore.getState().undoStack).toHaveLength(50);
+  });
+});
+
+describe('updateMapMeta', () => {
+  test('updates backgroundImageUrl on existing mapConfig', () => {
+    useMapStore.getState().initMap(validMeta);
+    useMapStore.getState().updateMapMeta({ backgroundImageUrl: 'http://new.jpg' });
+    expect(useMapStore.getState().mapConfig!.map.backgroundImageUrl).toBe('http://new.jpg');
+  });
+
+  test('updates scale and pushes to undoStack', () => {
+    useMapStore.getState().initMap(validMeta);
+    useMapStore.getState().updateMapMeta({ scale: 0.5 });
+    expect(useMapStore.getState().mapConfig!.map.scale).toBe(0.5);
+    expect(useMapStore.getState().undoStack.length).toBe(1);
+  });
+
+  test('updates center', () => {
+    useMapStore.getState().initMap(validMeta);
+    useMapStore.getState().updateMapMeta({ center: { x: 400, y: 300 } });
+    expect(useMapStore.getState().mapConfig!.map.center).toEqual({ x: 400, y: 300 });
+  });
+
+  test('undo after updateMapMeta restores prior values', () => {
+    useMapStore.getState().initMap(validMeta);
+    useMapStore.getState().updateMapMeta({ scale: 2 });
+    useMapStore.getState().undo();
+    expect(useMapStore.getState().mapConfig!.map.scale).toBe(validMeta.scale);
+  });
+
+  test('does nothing when mapConfig is null', () => {
+    useMapStore.getState().updateMapMeta({ backgroundImageUrl: 'http://x.jpg' });
+    expect(useMapStore.getState().mapConfig).toBeNull();
+    expect(useMapStore.getState().undoStack.length).toBe(0);
   });
 });

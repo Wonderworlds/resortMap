@@ -11,7 +11,7 @@ import {
   removeEdge as coreRemoveEdge,
 } from '@resort-map/builder-core';
 
-export type ActiveTool = 'select' | 'placePoi' | 'placeNode' | 'drawEdge';
+export type ActiveTool = 'select' | 'placePoi' | 'placeNode' | 'drawEdge' | 'setCenter';
 
 const MAX_UNDO = 50;
 
@@ -36,6 +36,7 @@ interface MapStore {
   removeNode: (nodeId: string) => void;
   addEdge: (edge: GraphEdge) => void;
   removeEdge: (from: string, to: string) => void;
+  updateMapMeta: (patch: Partial<MapMeta>) => void;
 }
 
 export const useMapStore = create<MapStore>()((set) => ({
@@ -98,10 +99,20 @@ export const useMapStore = create<MapStore>()((set) => ({
   removeNode: (nodeId) =>
     set((state) => {
       if (!state.mapConfig) return {};
+      const current = state.selectedItemId;
+      let shouldClearSelection = current === nodeId;
+      if (!shouldClearSelection && current !== null) {
+        const colonIdx = current.indexOf(':');
+        if (colonIdx !== -1) {
+          const edgeFrom = current.slice(0, colonIdx);
+          const edgeTo = current.slice(colonIdx + 1);
+          shouldClearSelection = edgeFrom === nodeId || edgeTo === nodeId;
+        }
+      }
       return {
         mapConfig: coreRemoveNode(state.mapConfig, nodeId),
         undoStack: pushUndo(state.undoStack, state.mapConfig),
-        selectedItemId: state.selectedItemId === nodeId ? null : state.selectedItemId,
+        selectedItemId: shouldClearSelection ? null : current,
       };
     }),
 
@@ -122,6 +133,15 @@ export const useMapStore = create<MapStore>()((set) => ({
         mapConfig: coreRemoveEdge(state.mapConfig, from, to),
         undoStack: pushUndo(state.undoStack, state.mapConfig),
         selectedItemId: state.selectedItemId === edgeKey ? null : state.selectedItemId,
+      };
+    }),
+
+  updateMapMeta: (patch) =>
+    set((state) => {
+      if (!state.mapConfig) return {};
+      return {
+        mapConfig: { ...state.mapConfig, map: { ...state.mapConfig.map, ...patch } },
+        undoStack: pushUndo(state.undoStack, state.mapConfig),
       };
     }),
 }));

@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-16
-last_updated: 2026-06-17 # updated for story 2-2
+last_updated: 2026-06-18 # updated for stories 4-1, 4-2, 4-3, 4-4, 4-5
 project: resortMap
 project_key: NOKEY
 tracking_system: file-system
@@ -58,32 +58,32 @@ development_status:
   epic-2: in-progress
   2-1-builder-core-authoring-operations-and-serialization: review
   2-2-builder-react-app-skeleton-and-zustand-store: review
-  2-3-builder-react-mapcanvas-image-loading-and-poi-placement: backlog
-  2-4-builder-react-road-drawing-node-and-edge-placement: backlog
-  2-5-builder-react-sidebar-property-editor: backlog
-  2-6-builder-react-map-metadata-panel-and-gwmap-export: backlog
+  2-3-builder-react-mapcanvas-image-loading-and-poi-placement: review
+  2-4-builder-react-road-drawing-node-and-edge-placement: review
+  2-5-builder-react-sidebar-property-editor: review
+  2-6-builder-react-map-metadata-panel-and-gwmap-export: review
   epic-2-retrospective: optional
 
   # ──────────────────────────────────────────────
   # Epic 3: Map Viewing Core (view-core)
   # ──────────────────────────────────────────────
-  epic-3: backlog
-  3-1-view-core-pixel-math-and-graph-utilities: backlog
-  3-2-view-core-dijkstra-route-computation: backlog
-  3-3-view-core-poi-filtering: backlog
-  3-4-view-core-viewerreducer-and-viewerstate: backlog
-  3-5-end-to-end-pipeline-integration-test: backlog
+  epic-3: in-progress
+  3-1-view-core-pixel-math-and-graph-utilities: review
+  3-2-view-core-dijkstra-route-computation: review
+  3-3-view-core-poi-filtering: review
+  3-4-view-core-viewerreducer-and-viewerstate: review
+  3-5-end-to-end-pipeline-integration-test: review
   epic-3-retrospective: optional
 
   # ──────────────────────────────────────────────
   # Epic 4: Web Map Viewer (view-react)
   # ──────────────────────────────────────────────
-  epic-4: backlog
-  4-1-view-react-mapviewer-shell-and-source-parsing: backlog
-  4-2-view-react-mapcanvas-pan-and-zoom: backlog
-  4-3-view-react-poi-pins-and-selection: backlog
-  4-4-view-react-route-path-display: backlog
-  4-5-view-react-filterpanel-tag-and-distance-filtering: backlog
+  epic-4: in-progress
+  4-1-view-react-mapviewer-shell-and-source-parsing: review
+  4-2-view-react-mapcanvas-pan-and-zoom: review
+  4-3-view-react-poi-pins-and-selection: review
+  4-4-view-react-route-path-display: review
+  4-5-view-react-filterpanel-tag-and-distance-filtering: review
   epic-4-retrospective: optional
 
   # ──────────────────────────────────────────────

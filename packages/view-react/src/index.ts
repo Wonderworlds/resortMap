@@ -1,1 +1,2 @@
-export {}; // populated in Story 4.1
+export { MapViewer } from './MapViewer.tsx';
+export type { MapViewerProps } from './MapViewer.tsx';
