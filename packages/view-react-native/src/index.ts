@@ -1,1 +1,2 @@
-export {}; // populated in Story 5.1
+export { MapViewer } from './MapViewer';
+export type { MapViewerProps } from './MapViewer';

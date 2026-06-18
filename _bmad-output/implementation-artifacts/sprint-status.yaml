@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-16
-last_updated: 2026-06-18 # updated for stories 4-1, 4-2, 4-3, 4-4, 4-5
+last_updated: 2026-06-18 # updated for stories 4-1, 4-2, 4-3, 4-4, 4-5, 5-1, 5-2
 project: resortMap
 project_key: NOKEY
 tracking_system: file-system
@@ -89,10 +89,10 @@ development_status:
   # ──────────────────────────────────────────────
   # Epic 5: Mobile Map Viewer (view-react-native)
   # ──────────────────────────────────────────────
-  epic-5: backlog
-  5-1-view-react-native-mapviewer-shell-and-source-parsing: backlog
-  5-2-view-react-native-mapcanvas-pan-and-pinch-to-zoom: backlog
-  5-3-view-react-native-poi-pins-and-selection: backlog
+  epic-5: in-progress
+  5-1-view-react-native-mapviewer-shell-and-source-parsing: review
+  5-2-view-react-native-mapcanvas-pan-and-pinch-to-zoom: review
+  5-3-view-react-native-poi-pins-and-selection: ready-for-dev
   5-4-view-react-native-route-path-display: backlog
   5-5-view-react-native-filterpanel-tag-and-distance-filtering: backlog
   epic-5-retrospective: optional

@@ -5,3 +5,6 @@ export { ErrorCode, type ErrorCodeValue } from './errors';
 export type { ViewerStatus, PoiFilterOptions, ViewerState, ViewerAction } from './viewerTypes';
 
 export { validateGwmap } from './validate';
+
+
+export  * from './assets';

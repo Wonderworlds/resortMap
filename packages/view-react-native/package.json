@@ -4,6 +4,7 @@
   "type": "module",
   "exports": { ".": "./src/index.ts" },
   "dependencies": {
+    "@resort-map/types": "workspace:*",
     "@resort-map/view-core": "workspace:*"
   },
   "peerDependencies": {
@@ -14,6 +15,9 @@
     "react-native-reanimated": "catalog:"
   },
   "devDependencies": {
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "@testing-library/react": "^16.3.0"
   }
 }

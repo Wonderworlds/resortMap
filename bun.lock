@@ -79,9 +79,13 @@
       "name": "@resort-map/view-react-native",
       "version": "0.1.0",
       "dependencies": {
+        "@resort-map/types": "workspace:*",
         "@resort-map/view-core": "workspace:*",
       },
       "devDependencies": {
+        "@testing-library/react": "^16.3.0",
+        "react": "catalog:",
+        "react-dom": "catalog:",
         "typescript": "catalog:",
       },
       "peerDependencies": {
