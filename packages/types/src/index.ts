@@ -1,8 +1,7 @@
-export type { Position, MapMeta, POI, GraphNode, GraphEdge, MapConfig, Route } from './schema.ts';
+export type { Position, MapMeta, POI, GraphNode, GraphEdge, MapConfig, Route } from './schema';
 
-export { ErrorCode } from './errors.ts';
-export type { ErrorCodeValue } from './errors.ts';
+export { ErrorCode, type ErrorCodeValue } from './errors';
 
-export type { ViewerStatus, PoiFilterOptions, ViewerState, ViewerAction } from './viewerTypes.ts';
+export type { ViewerStatus, PoiFilterOptions, ViewerState, ViewerAction } from './viewerTypes';
 
-export { validateGwmap } from './validate.ts';
+export { validateGwmap } from './validate';

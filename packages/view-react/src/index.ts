@@ -1,2 +1,1 @@
-export { MapViewer } from './MapViewer.tsx';
-export type { MapViewerProps } from './MapViewer.tsx';
+export { MapViewer , type MapViewerProps} from './MapViewer';
