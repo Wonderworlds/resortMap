@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import type { Dispatch } from 'react';
 import type { MapConfig, ViewerAction, POI, Route } from '@resort-map/types';
 import { computeRoute } from '@resort-map/view-core';
-import { RoutePath } from './RoutePath.tsx';
+import { RoutePath } from './RoutePath';
 
 export interface MapCanvasProps {
   mapConfig: MapConfig;
