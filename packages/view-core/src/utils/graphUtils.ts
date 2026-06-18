@@ -1,5 +1,5 @@
 import type { MapConfig, GraphNode, Position } from '@resort-map/types';
-import { pixelDistance } from './pixelMath.ts';
+import { pixelDistance } from './pixelMath';
 
 export function buildAdjacencyList(config: MapConfig): Map<string, string[]> {
   const adj = new Map<string, string[]>();

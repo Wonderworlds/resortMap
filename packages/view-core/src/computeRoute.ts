@@ -1,6 +1,6 @@
 import type { MapConfig, Route, Position, GraphNode } from '@resort-map/types';
-import { buildAdjacencyList, nearestNode } from './utils/graphUtils.ts';
-import { pixelDistance, pixelsToMeters, estimateWalkTime } from './utils/pixelMath.ts';
+import { buildAdjacencyList, nearestNode } from './utils/graphUtils';
+import { pixelDistance, pixelsToMeters, estimateWalkTime } from './utils/pixelMath';
 
 function isPosition(v: string | Position): v is Position {
   return typeof v !== 'string';

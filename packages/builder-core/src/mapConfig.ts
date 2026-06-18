@@ -1,5 +1,5 @@
 import type { MapConfig, MapMeta, POI, GraphNode, GraphEdge } from '@resort-map/types';
-import { generateId } from './utils/idGeneration.ts';
+import { generateId } from './utils/idGeneration';
 
 export function createMapConfig(meta: MapMeta): MapConfig {
   return {

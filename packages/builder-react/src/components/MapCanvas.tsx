@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { POI, GraphNode, GraphEdge } from '@resort-map/types';
 import { updatePoi as coreUpdatePoi } from '@resort-map/builder-core';
-import { useMapStore } from '../store/mapStore.ts';
-import { toSvgCoords } from '../utils/svgCoords.ts';
+import { useMapStore } from '../store/mapStore';
+import { toSvgCoords } from '../utils/svgCoords';
 
 interface DragState {
   poiId: string;

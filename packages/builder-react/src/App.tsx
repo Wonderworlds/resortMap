@@ -1,6 +1,6 @@
-import { Toolbar } from './components/Toolbar.tsx';
-import { MapCanvas } from './components/MapCanvas.tsx';
-import { Sidebar } from './components/Sidebar.tsx';
+import { Toolbar } from './components/Toolbar';
+import { MapCanvas } from './components/MapCanvas';
+import { Sidebar } from './components/Sidebar';
 
 export function App(): JSX.Element {
   return (

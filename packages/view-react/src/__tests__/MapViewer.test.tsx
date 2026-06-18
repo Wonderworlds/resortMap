@@ -2,7 +2,7 @@ import { test, expect, describe, afterEach } from 'bun:test';
 import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import type { MapConfig } from '@resort-map/types';
 import complexMap from '@resort-map/types/fixtures/complex.gwmap.json';
-import { MapViewer } from '../MapViewer.tsx';
+import { MapViewer } from '../MapViewer';
 
 const config = complexMap as unknown as MapConfig;
 const validJson = JSON.stringify(config);

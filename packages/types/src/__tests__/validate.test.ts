@@ -1,6 +1,6 @@
 import { test, expect, describe } from 'bun:test';
-import { validateGwmap } from '../validate.ts';
-import { ErrorCode } from '../errors.ts';
+import { validateGwmap } from '../validate';
+import { ErrorCode } from '../errors';
 import sampleMap from '@resort-map/types/fixtures/sample.gwmap.json';
 import complexMap from '@resort-map/types/fixtures/complex.gwmap.json';
 

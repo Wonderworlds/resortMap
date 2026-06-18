@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { MapMeta } from '@resort-map/types';
 import { serializeGwmap } from '@resort-map/builder-core';
-import { useMapStore } from '../store/mapStore.ts';
+import { useMapStore } from '../store/mapStore';
 
 export function MapMetaPanel(): JSX.Element {
   const mapConfig = useMapStore((s) => s.mapConfig);

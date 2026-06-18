@@ -1,7 +1,7 @@
 import { test, expect, describe } from 'bun:test';
 import type { MapConfig } from '@resort-map/types';
 import complexMap from '@resort-map/types/fixtures/complex.gwmap.json';
-import { computeRoute } from '../computeRoute.ts';
+import { computeRoute } from '../computeRoute';
 
 const config = complexMap as unknown as MapConfig;
 

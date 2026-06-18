@@ -1,5 +1,5 @@
 import type { ViewerState, ViewerAction } from '@resort-map/types';
-import { filterPois } from './filterPois.ts';
+import { filterPois } from './filterPois';
 
 export const initialViewerState: ViewerState = {
   status: 'idle',

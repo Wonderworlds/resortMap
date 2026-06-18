@@ -1,7 +1,7 @@
 import { test, expect, describe, afterEach } from 'bun:test';
 import { render, screen, cleanup } from '@testing-library/react';
 import type { Route } from '@resort-map/types';
-import { RoutePath } from '../components/RoutePath.tsx';
+import { RoutePath } from '../components/RoutePath';
 
 afterEach(cleanup);
 

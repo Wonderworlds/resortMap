@@ -1,5 +1,5 @@
 import { test, expect, describe } from 'bun:test';
-import { pixelDistance, pixelsToMeters, estimateWalkTime } from '../utils/pixelMath.ts';
+import { pixelDistance, pixelsToMeters, estimateWalkTime } from '../utils/pixelMath';
 
 describe('pixelDistance', () => {
   test('3-4-5 right triangle returns 5', () => {

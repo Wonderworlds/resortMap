@@ -1,4 +1,4 @@
-import type { MapConfig, POI, Route, Position } from './schema.ts';
+import type { MapConfig, POI, Route, Position } from './schema';
 
 export type ViewerStatus = 'idle' | 'loading' | 'ready' | 'error';
 

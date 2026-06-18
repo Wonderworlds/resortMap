@@ -1,7 +1,7 @@
 import type { MapConfig, ViewerStatus, PoiFilterOptions } from '@resort-map/types';
-import { useMapViewer } from './hooks/useMapViewer.ts';
-import { MapCanvas } from './components/MapCanvas.tsx';
-import { FilterPanel } from './components/FilterPanel.tsx';
+import { useMapViewer } from './hooks/useMapViewer';
+import { MapCanvas } from './components/MapCanvas';
+import { FilterPanel } from './components/FilterPanel';
 
 export interface MapViewerProps {
   source: string | MapConfig;

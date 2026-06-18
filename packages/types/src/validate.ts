@@ -1,5 +1,5 @@
-import type { MapConfig, MapMeta, POI, GraphNode, GraphEdge, Position } from './schema.ts';
-import { ErrorCode } from './errors.ts';
+import type { MapConfig, MapMeta, POI, GraphNode, GraphEdge, Position } from './schema';
+import { ErrorCode } from './errors';
 
 export function validateGwmap(raw: unknown): MapConfig {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {

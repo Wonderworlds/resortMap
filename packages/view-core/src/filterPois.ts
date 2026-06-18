@@ -1,6 +1,6 @@
 import type { MapConfig, POI, PoiFilterOptions } from '@resort-map/types';
 import { ErrorCode } from '@resort-map/types';
-import { pixelDistance, pixelsToMeters } from './utils/pixelMath.ts';
+import { pixelDistance, pixelsToMeters } from './utils/pixelMath';
 
 export function filterPois(config: MapConfig, options: PoiFilterOptions): POI[] {
   if (options.maxDistanceMeters !== undefined && options.origin === undefined) {

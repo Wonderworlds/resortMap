@@ -1,5 +1,5 @@
-import { useMapStore } from '../store/mapStore.ts';
-import type { ActiveTool } from '../store/mapStore.ts';
+import { useMapStore } from '../store/mapStore';
+import type { ActiveTool } from '../store/mapStore';
 
 interface ToolItem {
   tool: ActiveTool;

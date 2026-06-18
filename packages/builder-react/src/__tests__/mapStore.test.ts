@@ -1,5 +1,5 @@
 import { test, expect, describe, beforeEach } from 'bun:test';
-import { useMapStore } from '../store/mapStore.ts';
+import { useMapStore } from '../store/mapStore';
 import type { MapMeta } from '@resort-map/types';
 
 const validMeta: MapMeta = {

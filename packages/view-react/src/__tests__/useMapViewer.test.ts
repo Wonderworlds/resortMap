@@ -2,7 +2,7 @@ import { test, expect, describe } from 'bun:test';
 import { renderHook, act } from '@testing-library/react';
 import type { MapConfig } from '@resort-map/types';
 import complexMap from '@resort-map/types/fixtures/complex.gwmap.json';
-import { useMapViewer } from '../hooks/useMapViewer.ts';
+import { useMapViewer } from '../hooks/useMapViewer';
 
 const config = complexMap as unknown as MapConfig;
 const validJson = JSON.stringify(config);

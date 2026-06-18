@@ -1,7 +1,7 @@
 import { test, expect, describe } from 'bun:test';
 import type { MapConfig, Route } from '@resort-map/types';
 import complexMap from '@resort-map/types/fixtures/complex.gwmap.json';
-import { viewerReducer, initialViewerState } from '../viewerState.ts';
+import { viewerReducer, initialViewerState } from '../viewerState';
 
 const config = complexMap as unknown as MapConfig;
 const mockRoute: Route = {

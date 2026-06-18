@@ -1,6 +1,6 @@
 import { test, expect, describe } from 'bun:test';
 import type { MapConfig } from '@resort-map/types';
-import { buildAdjacencyList, nearestNode } from '../utils/graphUtils.ts';
+import { buildAdjacencyList, nearestNode } from '../utils/graphUtils';
 
 function makeConfig(
   nodes: { id: string; x: number; y: number }[],

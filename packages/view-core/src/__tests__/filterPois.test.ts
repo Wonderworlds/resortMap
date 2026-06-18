@@ -1,7 +1,7 @@
 import { test, expect, describe } from 'bun:test';
 import type { MapConfig } from '@resort-map/types';
 import complexMap from '@resort-map/types/fixtures/complex.gwmap.json';
-import { filterPois } from '../filterPois.ts';
+import { filterPois } from '../filterPois';
 
 const config = complexMap as unknown as MapConfig;
 const origin = { x: 100, y: 300 } as const;

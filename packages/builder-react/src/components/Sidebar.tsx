@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { POI, GraphNode } from '@resort-map/types';
-import { useMapStore } from '../store/mapStore.ts';
-import { MapMetaPanel } from './MapMetaPanel.tsx';
+import { useMapStore } from '../store/mapStore';
+import { MapMetaPanel } from './MapMetaPanel';
 
 export function Sidebar(): JSX.Element {
   const mapConfig = useMapStore((s) => s.mapConfig);

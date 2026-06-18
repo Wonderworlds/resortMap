@@ -1,6 +1,6 @@
 import { test, expect, describe } from 'bun:test';
-import { serializeGwmap, parseGwmap } from '../serialization.ts';
-import { createMapConfig, addPoi, addNode, addEdge } from '../mapConfig.ts';
+import { serializeGwmap, parseGwmap } from '../serialization';
+import { createMapConfig, addPoi, addNode, addEdge } from '../mapConfig';
 import { ErrorCode } from '@resort-map/types';
 import complexMap from '@resort-map/types/fixtures/complex.gwmap.json';
 import type { MapMeta } from '@resort-map/types';

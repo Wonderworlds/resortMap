@@ -1,5 +1,5 @@
 import { test, expect, describe } from 'bun:test';
-import { ErrorCode } from '../errors.ts';
+import { ErrorCode } from '../errors';
 import type {
   Position,
   MapMeta,

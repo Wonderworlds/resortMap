@@ -1,5 +1,5 @@
 import { test, expect, describe } from 'bun:test';
-import { parseGwmap } from '../parseGwmap.ts';
+import { parseGwmap } from '../parseGwmap';
 
 const validGwmapJson = JSON.stringify({
   version: '1.0',

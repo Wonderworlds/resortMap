@@ -2,7 +2,7 @@ import { test, expect, describe, afterEach, beforeEach } from 'bun:test';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import type { MapConfig, ViewerAction, PoiFilterOptions } from '@resort-map/types';
 import complexMap from '@resort-map/types/fixtures/complex.gwmap.json';
-import { FilterPanel } from '../components/FilterPanel.tsx';
+import { FilterPanel } from '../components/FilterPanel';
 
 const config = complexMap as unknown as MapConfig;
 

@@ -1,5 +1,5 @@
 import { test, expect, describe } from 'bun:test';
-import { toSvgCoords } from '../utils/svgCoords.ts';
+import { toSvgCoords } from '../utils/svgCoords';
 
 const rect = { left: 100, top: 50, width: 800, height: 600 };
 const imageSize = { w: 1600, h: 1200 };
