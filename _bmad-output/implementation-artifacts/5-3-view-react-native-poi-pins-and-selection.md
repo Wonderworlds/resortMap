@@ -1,6 +1,10 @@
+---
+baseline_commit: 2f0fe989e79100f951f544d23e90baea1a5ab7c3
+---
+
 # Story 5.3: view-react-native — POI Pins & Selection
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -22,38 +26,38 @@ Status: ready-for-dev
 
 ## Tasks / Subtasks
 
-- [ ] Write RED tests — update `packages/view-react-native/src/__tests__/MapCanvas.test.tsx` (AC: 1, 2, 3, 4, 5)
-  - [ ] Add `G` and `Circle` to `react-native-svg` mock factory
-  - [ ] Test: renders `testID="poi-pin-{poi.id}"` for each poi in `filteredPois`
-  - [ ] Test: `SELECT_POI` dispatched with poi id when pin is tapped (fireEvent.click on `<g>`)
-  - [ ] Test: `SET_ROUTE` dispatched when second poi tapped while one selected
-  - [ ] Test: `onRouteRequest` called with `(firstId, secondId)` when second poi tapped
-  - [ ] Test: pin NOT rendered for poi excluded from `filteredPois`
+- [x] Write RED tests — update `packages/view-react-native/src/__tests__/MapCanvas.test.tsx` (AC: 1, 2, 3, 4, 5)
+  - [x] Add `G` and `Circle` to `react-native-svg` mock factory
+  - [x] Test: renders `testID="poi-pin-{poi.id}"` for each poi in `filteredPois`
+  - [x] Test: `SELECT_POI` dispatched with poi id when pin is tapped (fireEvent.click on `<g>`)
+  - [x] Test: `SET_ROUTE` dispatched when second poi tapped while one selected
+  - [x] Test: `onRouteRequest` called with `(firstId, secondId)` when second poi tapped
+  - [x] Test: pin NOT rendered for poi excluded from `filteredPois`
 
-- [ ] Create `packages/view-react-native/src/components/PoiPin.tsx` (AC: 1, 2)
-  - [ ] Import `G`, `Circle` from `react-native-svg`
-  - [ ] Props: `{ poi: POI; isSelected: boolean; onTap: () => void }`
-  - [ ] Render `<G testID={`poi-pin-${poi.id}`} onPress={onTap}>` wrapping `<Circle cx={poi.position.x} cy={poi.position.y} r={8} fill={isSelected ? '#ff4444' : '#3b82f6'} />`
-  - [ ] NOT exported from `index.ts` (private component used only by MapCanvas)
+- [x] Create `packages/view-react-native/src/components/PoiPin.tsx` (AC: 1, 2)
+  - [x] Import `G`, `Circle` from `react-native-svg`
+  - [x] Props: `{ poi: POI; isSelected: boolean; onTap: () => void }`
+  - [x] Render `<G testID={`poi-pin-${poi.id}`} onPress={onTap}>` wrapping `<Circle cx={poi.position.x} cy={poi.position.y} r={8} fill={isSelected ? '#ff4444' : '#3b82f6'} />`
+  - [x] NOT exported from `index.ts` (private component used only by MapCanvas)
 
-- [ ] Update `packages/view-react-native/src/components/MapCanvas.tsx` (AC: 1, 2, 3, 4, 5)
-  - [ ] Add props: `filteredPois?: POI[]`, `selectedPoiId?: string | null`, `onRouteRequest?: (fromId: string, toId: string) => void`
-  - [ ] Import `computeRoute` from `@resort-map/view-core`
-  - [ ] Import `PoiPin` from `./PoiPin`
-  - [ ] Add `handlePoiTap(tappedPoiId)` callback using `useCallback`
-    - [ ] If `selectedPoiId` is set and `!== tappedPoiId`: call `computeRoute`, dispatch `SELECT_POI` + `SET_ROUTE`, call `onRouteRequest?.()`
-    - [ ] Otherwise: dispatch `SELECT_POI` only
-  - [ ] Change `<Svg ... />` (self-closing) to `<Svg ...>` with children
-  - [ ] Render `{filteredPois.map(poi => <PoiPin key={poi.id} poi={poi} isSelected={selectedPoiId === poi.id} onTap={() => handlePoiTap(poi.id)} />)}` inside `<Svg>`
-  - [ ] Default `filteredPois = []`, `selectedPoiId = null`
+- [x] Update `packages/view-react-native/src/components/MapCanvas.tsx` (AC: 1, 2, 3, 4, 5)
+  - [x] Add props: `filteredPois?: POI[]`, `selectedPoiId?: string | null`, `onRouteRequest?: (fromId: string, toId: string) => void`
+  - [x] Import `computeRoute` from `@resort-map/view-core`
+  - [x] Import `PoiPin` from `./PoiPin`
+  - [x] Add `handlePoiTap(tappedPoiId)` callback using `useCallback`
+    - [x] If `selectedPoiId` is set and `!== tappedPoiId`: call `computeRoute`, dispatch `SELECT_POI` + `SET_ROUTE`, call `onRouteRequest?.()`
+    - [x] Otherwise: dispatch `SELECT_POI` only
+  - [x] Change `<Svg ... />` (self-closing) to `<Svg ...>` with children
+  - [x] Render `{filteredPois.map(poi => <PoiPin key={poi.id} poi={poi} isSelected={selectedPoiId === poi.id} onTap={() => handlePoiTap(poi.id)} />)}` inside `<Svg>`
+  - [x] Default `filteredPois = []`, `selectedPoiId = null`
 
-- [ ] Update `packages/view-react-native/src/MapViewer.tsx` (AC: 1, 2, 3, 4, 5)
-  - [ ] Add `onRouteRequest?: (fromId: string, toId: string) => void` to `MapViewerProps`
-  - [ ] Pass `filteredPois={state.filteredPois}`, `selectedPoiId={state.selectedPoiId}`, `onRouteRequest={onRouteRequest}` to `<MapCanvas>`
+- [x] Update `packages/view-react-native/src/MapViewer.tsx` (AC: 1, 2, 3, 4, 5)
+  - [x] Add `onRouteRequest?: (fromId: string, toId: string) => void` to `MapViewerProps`
+  - [x] Pass `filteredPois={state.filteredPois}`, `selectedPoiId={state.selectedPoiId}`, `onRouteRequest={onRouteRequest}` to `<MapCanvas>`
 
-- [ ] Verify GREEN: `bun test packages/view-react-native` — all 18 tests pass (13 existing + 5 new)
+- [x] Verify GREEN: `bun test packages/view-react-native` — all 18 tests pass (13 existing + 5 new)
 
-- [ ] Run `bun test` — confirm 203 total across 21 files, no regressions
+- [x] Run `bun test` — confirm 203 total across 21 files, no regressions
 
 ## Dev Notes
 
@@ -364,12 +368,29 @@ Expected total: **203 tests across 21 files**
 
 ### Agent Model Used
 
-_to be filled by dev agent_
+claude-sonnet-4-6
 
 ### Debug Log References
 
+- Discovered Bun cross-file module caching issue: when `react-native-svg` mock in MapViewer.test.tsx lacked `G`/`Circle`, it poisoned the module cache for subsequent test files. Fix: added `G` and `Circle` to `react-native-svg` mock in MapViewer.test.tsx to match MapCanvas.test.tsx.
+
 ### Completion Notes List
+
+- Created `PoiPin.tsx` — renders `<G testID onPress><Circle .../></G>` using `react-native-svg` primitives.
+- Updated `MapCanvas.tsx` — added `filteredPois`, `selectedPoiId`, `onRouteRequest` props; implemented `handlePoiTap` with `useCallback` mirroring view-react pattern; renders PoiPin children inside `<Svg>`.
+- Updated `MapViewer.tsx` — added `onRouteRequest` to `MapViewerProps`; passes `filteredPois`, `selectedPoiId`, `onRouteRequest` down to `<MapCanvas>`.
+- Updated `MapCanvas.test.tsx` — added `G` and `Circle` to `react-native-svg` mock; added 5 new tests in `describe('MapCanvas — POI Pins')` block.
+- Updated `MapViewer.test.tsx` — added `G` and `Circle` to `react-native-svg` mock (required for cross-file cache consistency).
+- All 5 ACs satisfied; 203 tests pass across 21 files (0 regressions).
 
 ### File List
 
+- packages/view-react-native/src/components/PoiPin.tsx (created)
+- packages/view-react-native/src/components/MapCanvas.tsx (modified)
+- packages/view-react-native/src/MapViewer.tsx (modified)
+- packages/view-react-native/src/__tests__/MapCanvas.test.tsx (modified)
+- packages/view-react-native/src/__tests__/MapViewer.test.tsx (modified)
+
 ### Change Log
+
+- 2026-06-20: Implemented Story 5.3 — POI Pins & Selection for view-react-native. Created PoiPin component; extended MapCanvas with poi rendering and tap-to-route logic; extended MapViewer to pass poi state and onRouteRequest prop. Added 5 new tests (18 total in package, 203 total).

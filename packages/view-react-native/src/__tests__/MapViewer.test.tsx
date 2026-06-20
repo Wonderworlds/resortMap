@@ -22,6 +22,15 @@ mock.module('react-native', () => ({
     onLoad: () => onLoad?.({ nativeEvent: { source: { width: 1024, height: 768 } } }),
   }),
   StyleSheet: { create: (s: Record<string, unknown>) => s },
+  TouchableOpacity: ({ children, testID, onPress }: { children?: React.ReactNode; testID?: string; onPress?: () => void }) =>
+    React.createElement('div', { 'data-testid': testID, onClick: onPress, role: 'button' }, children),
+  TextInput: ({ testID, onChangeText, value, placeholder }: { testID?: string; onChangeText?: (v: string) => void; value?: string; placeholder?: string }) =>
+    React.createElement('input', {
+      'data-testid': testID,
+      value: value ?? '',
+      placeholder,
+      onChange: (e: { target: { value: string } }) => onChangeText?.(e.target.value),
+    }),
 }));
 
 mock.module('react-native-reanimated', () => ({
@@ -59,6 +68,14 @@ mock.module('react-native-gesture-handler', () => ({
 mock.module('react-native-svg', () => ({
   Svg: ({ children, testID, viewBox, style }: { children?: React.ReactNode; testID?: string; viewBox?: string; style?: unknown }) =>
     React.createElement('svg', { 'data-testid': testID, viewBox, style }, children),
+  G: ({ children, testID, onPress }: { children?: React.ReactNode; testID?: string; onPress?: () => void }) =>
+    React.createElement('g', { 'data-testid': testID, onClick: onPress }, children),
+  Circle: ({ cx, cy, r, fill, stroke, strokeWidth }: { cx?: number; cy?: number; r?: number; fill?: string; stroke?: string; strokeWidth?: number }) =>
+    React.createElement('circle', { cx, cy, r, fill, stroke, strokeWidth }),
+  Polyline: ({ testID, points, fill, stroke, strokeWidth }: { testID?: string; points?: string; fill?: string; stroke?: string; strokeWidth?: number }) =>
+    React.createElement('polyline', { 'data-testid': testID, points, fill, stroke, strokeWidth }),
+  Text: ({ testID, children, x, y, fill, stroke }: { testID?: string; children?: React.ReactNode; x?: number; y?: number; fill?: string; stroke?: string }) =>
+    React.createElement('text', { 'data-testid': testID, x, y, fill, stroke }, children),
 }));
 
 // Dynamic import AFTER mocks are registered
