@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
+import Box from '@mui/material/Box';
 import { AppBar } from './components/AppBar';
+import { LeftPanel } from './components/LeftPanel';
 import { MapCanvas } from './components/MapCanvas';
 import { Sidebar } from './components/Sidebar';
 import { useMapStore } from './store/mapStore';
@@ -26,14 +28,15 @@ export function App(): JSX.Element {
   }, [undo, redo]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', margin: 0, fontFamily: 'sans-serif' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <AppBar />
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+      <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        <LeftPanel />
+        <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
           <MapCanvas />
-        </div>
+        </Box>
         <Sidebar />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

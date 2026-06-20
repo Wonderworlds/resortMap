@@ -2,10 +2,11 @@
 id: 6-3
 title: "Builder React — Left Panel (Tools + Map Config)"
 epic: 6
-status: ready-for-dev
+status: review
 created: 2026-06-20
 updated: 2026-06-20
 depends-on: [6-2]
+baseline_commit: 7c006331f76cefa0cb115bc3e715cdebdca6ad74
 ---
 
 ## Story
@@ -83,17 +84,17 @@ This story restructures the left portion of the builder. The current `<Toolbar>`
 
 ## Tasks
 
-1. **`src/components/LeftPanel.tsx`** (new) — MUI `<Drawer variant="permanent" anchor="left">` with `width: 240px`. Structure:
+1. [x] **`src/components/LeftPanel.tsx`** (new) — MUI `<Drawer variant="permanent" anchor="left">` with `width: 240px`. Structure:
    - `<Box sx={{ p: 1.5 }}>` containing:
    - `<Typography variant="overline">Tools</Typography>`
    - `<ToggleButtonGroup orientation="vertical" exclusive value={activeTool} onChange={handleToolChange} fullWidth>` with 4 `<ToggleButton>` items: `value="select"` + `<NearMeIcon>` + "Select", `value="placePoi"` + `<AddLocationIcon>` + "Place POI", `value="drawStreet"` + `<TimelineIcon>` + "Draw Street", `value="setScale"` + `<StraightenIcon>` + "Set Scale"
    - `<Divider sx={{ my: 2 }} />`
    - `<Typography variant="overline">Map Properties</Typography>`
    - `<MapMetaPanel />` (the refactored version, Export removed)
-2. **`src/components/MapMetaPanel.tsx`** — migrate all `style={{}}` to MUI components: `<TextField label="Background Image URL" ...>`, `<TextField label="Scale (m/px)" type="number" ...>`, `<Button variant="outlined" ...>Set Center</Button>`; remove Export button and its `exportGwmap` function (now in AppBar)
-3. **`src/components/Sidebar.tsx`** — remove `import { MapMetaPanel }` and the `<MapMetaPanel />` render + the `<div>` divider after it; leave POI/node property rendering intact
-4. **`src/App.tsx`** — update layout: `<Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>` → `<AppBar />` → `<Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>` → `<LeftPanel />` → `<Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>` → `<MapCanvas />` → `</Box>` → `<Sidebar />` → `</Box>` → `</Box>`
-5. **Verify `bun test`** passes (no store changes in this story; existing tests must still pass)
+2. [x] **`src/components/MapMetaPanel.tsx`** — migrate all `style={{}}` to MUI components: `<TextField label="Background Image URL" ...>`, `<TextField label="Scale (m/px)" type="number" ...>`, `<Button variant="outlined" ...>Set Center</Button>`; remove Export button and its `exportGwmap` function (now in AppBar)
+3. [x] **`src/components/Sidebar.tsx`** — remove `import { MapMetaPanel }` and the `<MapMetaPanel />` render + the `<div>` divider after it; leave POI/node property rendering intact
+4. [x] **`src/App.tsx`** — update layout: `<Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>` → `<AppBar />` → `<Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>` → `<LeftPanel />` → `<Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>` → `<MapCanvas />` → `</Box>` → `<Sidebar />` → `</Box>` → `</Box>`
+5. [x] **Verify `bun test`** passes (no store changes in this story; existing tests must still pass)
 
 ## Design Notes
 
@@ -102,8 +103,27 @@ This story restructures the left portion of the builder. The current `<Toolbar>`
 - `<ToggleButtonGroup orientation="vertical">` with `fullWidth` renders buttons stacked at full panel width — preferred over a 2×2 grid for label readability.
 - `MapMetaPanel` URL draft state and `useEffect` syncs remain unchanged; only the JSX changes from raw HTML to MUI components.
 
+## Dev Agent Record
+
+### Implementation Notes
+
+- `LeftPanel.tsx`: permanent MUI Drawer with `position: 'relative'` on `.MuiDrawer-paper` so it participates in flex layout without floating.
+- `paletteValue` computed from `activeTool` — when `activeTool === 'setCenter'` (activated from Map Config), no palette button is highlighted (value falls through to `null`).
+- `MapMetaPanel.tsx`: all raw JSX replaced with MUI `TextField` (size="small", fullWidth) and `Button`. Export button and `exportGwmap` removed (already lives in AppBar from 6-2). `MapMeta` import kept for `initMap` call.
+- `Sidebar.tsx`: `MapMetaPanel` import and render removed; all POI/node property editor code preserved intact.
+- `App.tsx`: layout migrated from raw `<div style={}>` to MUI `Box sx={}` wrappers; `<LeftPanel />` inserted between AppBar and MapCanvas.
+- 235/235 tests pass; zero regressions; no TS errors in builder-react.
+
+### File List
+
+- `packages/builder-react/src/components/LeftPanel.tsx` (new)
+- `packages/builder-react/src/components/MapMetaPanel.tsx` (modified — MUI migration, Export removed)
+- `packages/builder-react/src/components/Sidebar.tsx` (modified — MapMetaPanel removed)
+- `packages/builder-react/src/App.tsx` (modified — LeftPanel added, MUI Box layout)
+
 ## Spec Change Log
 
 | Date | Change |
 |---|---|
 | 2026-06-20 | Initial creation |
+| 2026-06-20 | Implementation complete — all 5 tasks checked, 235/235 tests pass |

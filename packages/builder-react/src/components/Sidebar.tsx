@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { POI, GraphNode } from '@resort-map/types';
 import { useMapStore } from '../store/mapStore';
-import { MapMetaPanel } from './MapMetaPanel';
 
 export function Sidebar(): JSX.Element {
   const mapConfig = useMapStore((s) => s.mapConfig);
@@ -27,8 +26,6 @@ export function Sidebar(): JSX.Element {
         flexShrink: 0,
       }}
     >
-      <MapMetaPanel />
-      <div style={{ borderTop: '1px solid #e5e7eb', marginBottom: '16px' }} />
       {selectedPoi ? (
         <PoiEditor key={selectedPoi.id} poi={selectedPoi} updatePoi={updatePoi} />
       ) : selectedNode ? (
