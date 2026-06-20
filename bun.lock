@@ -36,6 +36,17 @@
         "react-dom": "catalog:",
       },
     },
+    "packages/poi-icons": {
+      "name": "@resort-map/poi-icons",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@types/react": "^18.3.0",
+        "typescript": "catalog:",
+      },
+      "peerDependencies": {
+        "react": "catalog:",
+      },
+    },
     "packages/types": {
       "name": "@resort-map/types",
       "version": "0.1.0",
@@ -226,6 +237,8 @@
     "@resort-map/builder-core": ["@resort-map/builder-core@workspace:packages/builder-core"],
 
     "@resort-map/builder-react": ["@resort-map/builder-react@workspace:packages/builder-react"],
+
+    "@resort-map/poi-icons": ["@resort-map/poi-icons@workspace:packages/poi-icons"],
 
     "@resort-map/types": ["@resort-map/types@workspace:packages/types"],
 

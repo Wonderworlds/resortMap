@@ -1,0 +1,15 @@
+{
+  "name": "@resort-map/poi-icons",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "peerDependencies": {
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "@types/react": "^18.3.0"
+  }
+}

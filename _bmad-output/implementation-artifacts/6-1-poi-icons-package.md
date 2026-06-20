@@ -2,9 +2,10 @@
 id: 6-1
 title: "@resort-map/poi-icons — SVG Icon Package"
 epic: 6
-status: ready-for-dev
+status: review
 created: 2026-06-20
 updated: 2026-06-20
+baseline_commit: a352675165e00fa031d74695127f283914d42613
 ---
 
 ## Story
@@ -59,14 +60,14 @@ No existing code changes. Pure new package creation.
 
 ## Tasks
 
-1. **`packages/poi-icons/package.json`** — create with `name: "@resort-map/poi-icons"`, `version: "0.1.0"`, `type: "module"`, `peerDependencies: { react: "catalog:" }`, `exports: { ".": "./src/index.ts" }`, `devDependencies: { typescript: "catalog:", "@types/react": "^18.3.0" }`
-2. **`packages/poi-icons/tsconfig.json`** — extend `../../tsconfig.base.json`, `jsx: "react-jsx"`, include `src`
-3. **`packages/poi-icons/src/icons/`** — create 12 SVG component files (one per icon). Each file: `import React from 'react'; export function XxxIcon(props: React.SVGProps<SVGSVGElement>) { return <svg width={24} height={24} viewBox="0 0 24 24" fill="currentColor" {...props}>…path…</svg>; }`. Use simple, clean paths (Material Design icon paths acceptable as reference).
-4. **`packages/poi-icons/src/registry.ts`** — define and export `POI_ICONS` object mapping kebab-case key → `{ label, Icon }`
-5. **`packages/poi-icons/src/index.ts`** — re-export all 12 icon components + `POI_ICONS` + `type PoiIconEntry`
-6. **Root `package.json`** — add `"packages/poi-icons"` to `workspaces` array
-7. **`packages/poi-icons/src/__tests__/icons.test.ts`** — write AC-7 tests using `bun:test`
-8. **`bun install`** — run from monorepo root, verify no resolution errors
+1. [x] **`packages/poi-icons/package.json`** — create with `name: "@resort-map/poi-icons"`, `version: "0.1.0"`, `type: "module"`, `peerDependencies: { react: "catalog:" }`, `exports: { ".": "./src/index.ts" }`, `devDependencies: { typescript: "catalog:", "@types/react": "^18.3.0" }`
+2. [x] **`packages/poi-icons/tsconfig.json`** — extend `../../tsconfig.base.json`, `jsx: "react-jsx"`, include `src`
+3. [x] **`packages/poi-icons/src/icons/`** — create 12 SVG component files (one per icon). Each file: `import React from 'react'; export function XxxIcon(props: React.SVGProps<SVGSVGElement>) { return <svg width={24} height={24} viewBox="0 0 24 24" fill="currentColor" {...props}>…path…</svg>; }`. Use simple, clean paths (Material Design icon paths acceptable as reference).
+4. [x] **`packages/poi-icons/src/registry.ts`** — define and export `POI_ICONS` object mapping kebab-case key → `{ label, Icon }`
+5. [x] **`packages/poi-icons/src/index.ts`** — re-export all 12 icon components + `POI_ICONS` + `type PoiIconEntry`
+6. [x] **Root `package.json`** — `"workspaces": ["packages/*"]` already covers `packages/poi-icons`; no change needed
+7. [x] **`packages/poi-icons/src/__tests__/icons.test.ts`** — write AC-7 tests using `bun:test`
+8. [x] **`bun install`** — run from monorepo root, verify no resolution errors
 
 ## Design Notes
 
@@ -74,8 +75,40 @@ No existing code changes. Pure new package creation.
 - The `Icon` in `POI_ICONS` and the named export are the same component reference.
 - No CSS, no Tailwind, no MUI dependency in this package — it must remain framework-agnostic beyond React itself.
 
+## Dev Agent Record
+
+### Implementation Notes
+
+- Used `import type { SVGProps } from 'react'` in each icon file — keeps imports type-only per `verbatimModuleSyntax: true`.
+- Root `workspaces: ["packages/*"]` glob already covers the new package; Task 6 required no file change.
+- `bun.lock` entry confirmed: `"@resort-map/poi-icons": ["@resort-map/poi-icons@workspace:packages/poi-icons"]`.
+- All 16 tests pass; full monorepo suite 228/228 green (no regressions).
+- SVG paths sourced from Material Design icon set (24×24 grid, `fill="currentColor"`).
+
+### File List
+
+- `packages/poi-icons/package.json` (new)
+- `packages/poi-icons/tsconfig.json` (new)
+- `packages/poi-icons/src/index.ts` (new)
+- `packages/poi-icons/src/registry.ts` (new)
+- `packages/poi-icons/src/icons/RestaurantIcon.tsx` (new)
+- `packages/poi-icons/src/icons/CafeIcon.tsx` (new)
+- `packages/poi-icons/src/icons/HotelIcon.tsx` (new)
+- `packages/poi-icons/src/icons/ParkingIcon.tsx` (new)
+- `packages/poi-icons/src/icons/RestroomIcon.tsx` (new)
+- `packages/poi-icons/src/icons/FirstAidIcon.tsx` (new)
+- `packages/poi-icons/src/icons/InfoIcon.tsx` (new)
+- `packages/poi-icons/src/icons/ShopIcon.tsx` (new)
+- `packages/poi-icons/src/icons/PoolIcon.tsx` (new)
+- `packages/poi-icons/src/icons/SkiLiftIcon.tsx` (new)
+- `packages/poi-icons/src/icons/EntranceIcon.tsx` (new)
+- `packages/poi-icons/src/icons/AccessibilityIcon.tsx` (new)
+- `packages/poi-icons/src/__tests__/icons.test.ts` (new)
+- `bun.lock` (updated — new workspace entry)
+
 ## Spec Change Log
 
 | Date | Change |
 |---|---|
 | 2026-06-20 | Initial creation |
+| 2026-06-20 | Implementation complete — all 7 tasks checked, 16 tests pass |

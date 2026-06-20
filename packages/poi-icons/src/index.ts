@@ -1,0 +1,14 @@
+export { RestaurantIcon } from './icons/RestaurantIcon';
+export { CafeIcon } from './icons/CafeIcon';
+export { HotelIcon } from './icons/HotelIcon';
+export { ParkingIcon } from './icons/ParkingIcon';
+export { RestroomIcon } from './icons/RestroomIcon';
+export { FirstAidIcon } from './icons/FirstAidIcon';
+export { InfoIcon } from './icons/InfoIcon';
+export { ShopIcon } from './icons/ShopIcon';
+export { PoolIcon } from './icons/PoolIcon';
+export { SkiLiftIcon } from './icons/SkiLiftIcon';
+export { EntranceIcon } from './icons/EntranceIcon';
+export { AccessibilityIcon } from './icons/AccessibilityIcon';
+export { POI_ICONS } from './registry';
+export type { PoiIconEntry } from './registry';

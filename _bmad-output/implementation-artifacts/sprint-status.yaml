@@ -101,7 +101,7 @@ development_status:
   # Epic 6: Builder React — UI/UX Redesign (MUI + 4-zone layout)
   # ──────────────────────────────────────────────────────────────────
   epic-6: in-progress
-  6-1-poi-icons-package: ready-for-dev
+  6-1-poi-icons-package: review
   6-2-mui-foundation-appbar-redo: ready-for-dev
   6-3-left-panel: ready-for-dev
   6-4-right-panel-icon-picker: ready-for-dev
