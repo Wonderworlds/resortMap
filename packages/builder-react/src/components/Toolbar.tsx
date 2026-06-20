@@ -9,8 +9,8 @@ interface ToolItem {
 const TOOLS: ToolItem[] = [
   { tool: 'select', label: 'Select' },
   { tool: 'placePoi', label: 'Place POI' },
-  { tool: 'placeNode', label: 'Place Node' },
-  { tool: 'drawEdge', label: 'Draw Edge' },
+  { tool: 'drawStreet', label: 'Draw Street' },
+  { tool: 'setScale', label: 'Set Scale' },
 ];
 
 export function Toolbar(): JSX.Element {

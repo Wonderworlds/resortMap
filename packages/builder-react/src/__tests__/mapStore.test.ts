@@ -33,14 +33,14 @@ describe('setActiveTool', () => {
     expect(useMapStore.getState().activeTool).toBe('placePoi');
   });
 
-  test('updates to placeNode', () => {
-    useMapStore.getState().setActiveTool('placeNode');
-    expect(useMapStore.getState().activeTool).toBe('placeNode');
+  test('updates to drawStreet', () => {
+    useMapStore.getState().setActiveTool('drawStreet');
+    expect(useMapStore.getState().activeTool).toBe('drawStreet');
   });
 
-  test('updates to drawEdge', () => {
-    useMapStore.getState().setActiveTool('drawEdge');
-    expect(useMapStore.getState().activeTool).toBe('drawEdge');
+  test('updates to setScale', () => {
+    useMapStore.getState().setActiveTool('setScale');
+    expect(useMapStore.getState().activeTool).toBe('setScale');
   });
 
   test('updates back to select', () => {

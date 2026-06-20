@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { POI, GraphNode, GraphEdge } from '@resort-map/types';
 import { updatePoi as coreUpdatePoi } from '@resort-map/builder-core';
 import { useMapStore } from '../store/mapStore';
-import { toSvgCoords } from '../utils/svgCoords';
+import { ScaleDialog } from './ScaleDialog';
 
 interface DragState {
   poiId: string;
@@ -26,7 +26,11 @@ export function MapCanvas(): JSX.Element {
   const svgRef = useRef<SVGSVGElement>(null);
   const [imageSize, setImageSize] = useState<{ w: number; h: number } | null>(null);
   const [dragState, setDragState] = useState<DragState | null>(null);
-  const [edgeStartId, setEdgeStartId] = useState<string | null>(null);
+  const [streetLastNodeId, setStreetLastNodeId] = useState<string | null>(null);
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
+  const [scalePoint1, setScalePoint1] = useState<{ x: number; y: number } | null>(null);
+  const [scalePoint2, setScalePoint2] = useState<{ x: number; y: number } | null>(null);
+  const [showScaleDialog, setShowScaleDialog] = useState(false);
 
   useEffect(() => {
     if (!mapConfig?.map.backgroundImageUrl) return;
@@ -38,9 +42,22 @@ export function MapCanvas(): JSX.Element {
   }, [mapConfig?.map.backgroundImageUrl]);
 
   useEffect(() => {
+    if (activeTool !== 'drawStreet') setStreetLastNodeId(null);
+    if (activeTool !== 'placePoi' && activeTool !== 'drawStreet' && activeTool !== 'setScale') setHoverPos(null);
+    if (activeTool !== 'setScale') {
+      setScalePoint1(null);
+      setScalePoint2(null);
+      setShowScaleDialog(false);
+    }
+  }, [activeTool]);
+
+  useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
-        setEdgeStartId(null);
+        setStreetLastNodeId(null);
+        setScalePoint1(null);
+        setScalePoint2(null);
+        setShowScaleDialog(false);
         if (activeTool === 'setCenter') setActiveTool('select');
         return;
       }
@@ -70,49 +87,74 @@ export function MapCanvas(): JSX.Element {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [selectedItemId, mapConfig, activeTool, removePoi, removeNode, removeEdge, setActiveTool]);
 
-  function getSvgRect(): DOMRect | null {
-    return svgRef.current?.getBoundingClientRect() ?? null;
+  function clientToSvg(clientX: number, clientY: number): { x: number; y: number } | null {
+    const svg = svgRef.current;
+    if (!svg) return null;
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return null;
+    const p = pt.matrixTransform(ctm.inverse());
+    return { x: Math.round(p.x), y: Math.round(p.y) };
   }
 
   function onSvgPointerDown(e: React.PointerEvent<SVGSVGElement>): void {
     if (!imageSize) return;
-    const rect = getSvgRect();
-    if (!rect) return;
-    const pos = toSvgCoords(e.clientX, e.clientY, rect, imageSize);
+    const pos = clientToSvg(e.clientX, e.clientY);
+    if (!pos) return;
 
     if (activeTool === 'placePoi') {
       addPoi({ label: 'New POI', position: pos, tags: [] });
       const newPois = useMapStore.getState().mapConfig!.pois;
       const newId = newPois[newPois.length - 1]!.id;
       setSelectedItemId(newId);
-    } else if (activeTool === 'placeNode') {
+    } else if (activeTool === 'drawStreet') {
       addNode({ position: pos });
       const nodes = useMapStore.getState().mapConfig!.graph.nodes;
       const newId = nodes[nodes.length - 1]!.id;
+      const prevId = streetLastNodeId;
+      setStreetLastNodeId(newId);
       setSelectedItemId(newId);
+      if (prevId) addEdge({ from: prevId, to: newId });
     } else if (activeTool === 'setCenter') {
       updateMapMeta({ center: pos });
       setActiveTool('select');
+    } else if (activeTool === 'setScale') {
+      if (!scalePoint1) {
+        setScalePoint1(pos);
+      } else if (!showScaleDialog) {
+        setScalePoint2(pos);
+        setShowScaleDialog(true);
+      }
     }
   }
 
   function onSvgPointerMove(e: React.PointerEvent<SVGSVGElement>): void {
-    if (!dragState || !imageSize) return;
-    const rect = getSvgRect();
-    if (!rect) return;
-    const pos = toSvgCoords(e.clientX, e.clientY, rect, imageSize);
-    const currentConfig = useMapStore.getState().mapConfig;
-    if (!currentConfig) return;
-    const newConfig = coreUpdatePoi(currentConfig, dragState.poiId, { position: pos });
-    useMapStore.setState({ mapConfig: newConfig });
+    const pos = clientToSvg(e.clientX, e.clientY);
+    if (!pos) return;
+
+    if (activeTool === 'placePoi' || activeTool === 'drawStreet' || activeTool === 'setCenter' || activeTool === 'setScale') {
+      setHoverPos(pos);
+    }
+
+    if (dragState && imageSize) {
+      const currentConfig = useMapStore.getState().mapConfig;
+      if (!currentConfig) return;
+      const newConfig = coreUpdatePoi(currentConfig, dragState.poiId, { position: pos });
+      useMapStore.setState({ mapConfig: newConfig });
+    }
+  }
+
+  function onSvgPointerLeave(): void {
+    setHoverPos(null);
   }
 
   function onSvgPointerUp(e: React.PointerEvent<SVGSVGElement>): void {
     if (!dragState || !imageSize) return;
     svgRef.current?.releasePointerCapture(e.pointerId);
-    const rect = getSvgRect();
-    if (rect) {
-      const pos = toSvgCoords(e.clientX, e.clientY, rect, imageSize);
+    const pos = clientToSvg(e.clientX, e.clientY);
+    if (pos) {
       useMapStore.getState().updatePoi(dragState.poiId, { position: pos });
     }
     setDragState(null);
@@ -132,17 +174,12 @@ export function MapCanvas(): JSX.Element {
     e.stopPropagation();
     if (activeTool === 'select') {
       setSelectedItemId(nodeId);
-    } else if (activeTool === 'drawEdge') {
-      if (!edgeStartId) {
-        setEdgeStartId(nodeId);
-        setSelectedItemId(nodeId);
-      } else if (edgeStartId === nodeId) {
-        setEdgeStartId(null);
-        setSelectedItemId(null);
-      } else {
-        addEdge({ from: edgeStartId, to: nodeId });
-        setEdgeStartId(null);
+    } else if (activeTool === 'drawStreet') {
+      if (streetLastNodeId && streetLastNodeId !== nodeId) {
+        addEdge({ from: streetLastNodeId, to: nodeId });
       }
+      setStreetLastNodeId(nodeId);
+      setSelectedItemId(nodeId);
     }
   }
 
@@ -192,12 +229,30 @@ export function MapCanvas(): JSX.Element {
   }
 
   const cursor = (() => {
-    if (activeTool === 'placePoi' || activeTool === 'placeNode' || activeTool === 'setCenter') return 'crosshair';
-    if (activeTool === 'drawEdge') return edgeStartId ? 'crosshair' : 'copy';
+    if (activeTool === 'placePoi' || activeTool === 'drawStreet' || activeTool === 'setCenter' || activeTool === 'setScale') return 'crosshair';
     return 'default';
   })();
 
+  function onScaleConfirm(scale: number): void {
+    updateMapMeta({ scale });
+    setScalePoint1(null);
+    setScalePoint2(null);
+    setShowScaleDialog(false);
+    setActiveTool('select');
+  }
+
+  function onScaleCancel(): void {
+    setScalePoint1(null);
+    setScalePoint2(null);
+    setShowScaleDialog(false);
+  }
+
+  const scalePixelDist = scalePoint1 && scalePoint2
+    ? Math.sqrt((scalePoint2.x - scalePoint1.x) ** 2 + (scalePoint2.y - scalePoint1.y) ** 2)
+    : 0;
+
   return (
+    <>
     <svg
       ref={svgRef}
       viewBox={`0 0 ${imageSize.w} ${imageSize.h}`}
@@ -205,6 +260,7 @@ export function MapCanvas(): JSX.Element {
       onPointerDown={onSvgPointerDown}
       onPointerMove={onSvgPointerMove}
       onPointerUp={onSvgPointerUp}
+      onPointerLeave={onSvgPointerLeave}
     >
       <image
         href={mapConfig.map.backgroundImageUrl}
@@ -260,7 +316,7 @@ export function MapCanvas(): JSX.Element {
           key={node.id}
           node={node}
           isSelected={selectedItemId === node.id}
-          isEdgeStart={edgeStartId === node.id}
+          isChainEnd={streetLastNodeId === node.id}
           onPointerDown={(e) => onNodePointerDown(e, node.id)}
         />
       ))}
@@ -272,7 +328,51 @@ export function MapCanvas(): JSX.Element {
           onPointerDown={(e) => onPinPointerDown(e, poi.id)}
         />
       ))}
+      {activeTool === 'drawStreet' && streetLastNodeId && hoverPos && (() => {
+        const anchor = mapConfig.graph.nodes.find((n) => n.id === streetLastNodeId);
+        if (!anchor) return null;
+        return (
+          <line
+            x1={anchor.position.x} y1={anchor.position.y}
+            x2={hoverPos.x} y2={hoverPos.y}
+            stroke="#6b7280" strokeWidth={2} strokeDasharray="6 4"
+            style={{ pointerEvents: 'none' }}
+          />
+        );
+      })()}
+      {activeTool === 'placePoi' && hoverPos && (
+        <g style={{ pointerEvents: 'none' }}>
+          <circle cx={hoverPos.x} cy={hoverPos.y} r={10} fill="#ef4444" stroke="#b91c1c" strokeWidth={2} opacity={0.5} />
+          <text x={hoverPos.x + 14} y={hoverPos.y + 4} fontSize={12} fill="#ef4444" stroke="white" strokeWidth={3} paintOrder="stroke">
+            {`(${hoverPos.x}, ${hoverPos.y})`}
+          </text>
+        </g>
+      )}
+      {activeTool === 'setScale' && (
+        <g style={{ pointerEvents: 'none' }}>
+          {scalePoint1 && <ScaleMarker pos={scalePoint1} />}
+          {scalePoint1 && !scalePoint2 && hoverPos && (
+            <line x1={scalePoint1.x} y1={scalePoint1.y} x2={hoverPos.x} y2={hoverPos.y}
+              stroke="#f59e0b" strokeWidth={2} strokeDasharray="6 3" />
+          )}
+          {scalePoint1 && scalePoint2 && (
+            <>
+              <line x1={scalePoint1.x} y1={scalePoint1.y} x2={scalePoint2.x} y2={scalePoint2.y}
+                stroke="#f59e0b" strokeWidth={2} />
+              <ScaleMarker pos={scalePoint2} />
+            </>
+          )}
+        </g>
+      )}
     </svg>
+    {showScaleDialog && scalePoint1 && scalePoint2 && (
+      <ScaleDialog
+        pixelDistance={scalePixelDist}
+        onConfirm={onScaleConfirm}
+        onCancel={onScaleCancel}
+      />
+    )}
+    </>
   );
 }
 
@@ -310,15 +410,15 @@ function RoadEdge({ edge, fromNode, toNode, isSelected, onPointerDown }: RoadEdg
 interface RoadNodeProps {
   node: GraphNode;
   isSelected: boolean;
-  isEdgeStart: boolean;
+  isChainEnd: boolean;
   onPointerDown: (e: React.PointerEvent<SVGGElement>) => void;
 }
 
-function RoadNode({ node, isSelected, isEdgeStart, onPointerDown }: RoadNodeProps): JSX.Element {
+function RoadNode({ node, isSelected, isChainEnd, onPointerDown }: RoadNodeProps): JSX.Element {
   const { x, y } = node.position;
   return (
     <g data-node-id={node.id} onPointerDown={onPointerDown} style={{ cursor: 'pointer' }}>
-      {isEdgeStart && (
+      {isChainEnd && (
         <rect x={x - 10} y={y - 10} width={20} height={20} fill="none" stroke="#f59e0b" strokeWidth={3} rx={3} />
       )}
       <rect
@@ -353,5 +453,15 @@ function PoiPin({ poi, isSelected, onPointerDown }: PoiPinProps): JSX.Element {
         strokeWidth={2}
       />
     </g>
+  );
+}
+
+function ScaleMarker({ pos }: { pos: { x: number; y: number } }): JSX.Element {
+  return (
+    <>
+      <circle cx={pos.x} cy={pos.y} r={6} fill="#f59e0b" stroke="#d97706" strokeWidth={2} />
+      <line x1={pos.x - 10} y1={pos.y} x2={pos.x + 10} y2={pos.y} stroke="#d97706" strokeWidth={1.5} />
+      <line x1={pos.x} y1={pos.y - 10} x2={pos.x} y2={pos.y + 10} stroke="#d97706" strokeWidth={1.5} />
+    </>
   );
 }
