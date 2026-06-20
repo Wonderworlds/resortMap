@@ -11,6 +11,7 @@
     "@mui/icons-material": "^6",
     "@mui/material": "^6",
     "@resort-map/builder-core": "workspace:*",
+    "@resort-map/poi-icons": "workspace:*",
     "@resort-map/types": "workspace:*",
     "zustand": "catalog:"
   },

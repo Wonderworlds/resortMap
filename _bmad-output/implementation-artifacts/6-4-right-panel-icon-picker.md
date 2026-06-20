@@ -2,7 +2,8 @@
 id: 6-4
 title: "Builder React — Right Properties Panel & POI Icon Picker"
 epic: 6
-status: ready-for-dev
+status: review
+baseline_commit: 46e6c70a44bcfcebeff5cf9e63b2cba04f556af2
 created: 2026-06-20
 updated: 2026-06-20
 depends-on: [6-1, 6-3]
@@ -102,23 +103,23 @@ After this story, no raw `style={{}}` blocks should remain in the builder-react 
 
 ## Tasks
 
-1. **`packages/builder-react/package.json`** — add `"@resort-map/poi-icons": "workspace:*"` to `dependencies`; run `bun install` from monorepo root
-2. **`src/components/RightPanel.tsx`** (new) — implement MUI `<Drawer anchor="right" variant="persistent" open={open}>` where `open = selectedItemId !== null`. Structure:
+1. [x] **`packages/builder-react/package.json`** — add `"@resort-map/poi-icons": "workspace:*"` to `dependencies`; run `bun install` from monorepo root
+2. [x] **`src/components/RightPanel.tsx`** (new) — implement MUI `<Drawer anchor="right" variant="persistent" open={open}>` where `open = selectedItemId !== null`. Structure:
    - Outer: `<Drawer sx={{ '& .MuiDrawer-paper': { width: 320, position: 'fixed', zIndex: (theme) => theme.zIndex.drawer + 1 } }}>` so it overlays the canvas
    - Header: `<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1 }}>` with `<Typography variant="h6">` and `<IconButton onClick={() => setSelectedItemId(null)}><ChevronRightIcon/></IconButton>`
    - `<Divider />`
    - Body: `{selectedPoi ? <PoiEditor poi={selectedPoi} /> : selectedNode ? <NodeInfo node={selectedNode} /> : null}`
-3. **`PoiEditor` sub-component** inside `RightPanel.tsx`:
+3. [x] **`PoiEditor` sub-component** inside `RightPanel.tsx`:
    - `<TextField label="Label" fullWidth value={labelDraft} onChange onBlur>` (commit on blur / Enter)
    - Tags section: `<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>` of `<Chip label={tag} onDelete={() => removeTag(tag)}>` + `<TextField label="Add tag" size="small" onKeyDown Enter handler>`
    - Icon picker: `<Typography variant="subtitle2">Icon</Typography>` + `<Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1 }}>` with a "None" cell + one `<Tooltip title={entry.label}><IconButton onClick={() => selectIcon(key)} sx={{ outline: isSelected ? '2px solid primary.main' : 'none' }}><entry.Icon /></IconButton></Tooltip>` per POI_ICONS entry
    - `<TextField label="Node ID" fullWidth ...>` (commit on blur)
-4. **`NodeInfo` sub-component** inside `RightPanel.tsx`:
+4. [x] **`NodeInfo` sub-component** inside `RightPanel.tsx`:
    - `<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>` with `<Typography sx={{ fontFamily: 'monospace', fontSize: 11, wordBreak: 'break-all' }}>{node.id}</Typography>` + `<IconButton size="small" onClick={copyId}>{copied ? <CheckIcon fontSize="small"/> : <ContentCopyIcon fontSize="small"/>}</IconButton>`
    - `<Typography variant="body2">Position: ({node.position.x}, {node.position.y})</Typography>`
-5. **`src/App.tsx`** — replace `<Sidebar />` with `<RightPanel />`; remove `import { Sidebar }`; the RightPanel's fixed positioning means it does not need to be inside the flex row as a sibling — it can be a sibling of the entire content area or inside it (either works with `position: fixed`)
-6. **Delete `src/components/Sidebar.tsx`** — fully replaced by RightPanel
-7. **Verify `bun test`** passes; verify no `style={{` in component files (`grep -r "style={{" packages/builder-react/src/`)
+5. [x] **`src/App.tsx`** — replace `<Sidebar />` with `<RightPanel />`; remove `import { Sidebar }`; the RightPanel's fixed positioning means it does not need to be inside the flex row as a sibling — it can be a sibling of the entire content area or inside it (either works with `position: fixed`)
+6. [x] **Delete `src/components/Sidebar.tsx`** — fully replaced by RightPanel
+7. [x] **Verify `bun test`** passes; verify no `style={{` in component files (`grep -r "style={{" packages/builder-react/src/`)
 
 ## Design Notes
 
@@ -128,8 +129,31 @@ After this story, no raw `style={{}}` blocks should remain in the builder-react 
 - **`copied` state for clipboard:** local `useState<boolean>(false)` that resets to `false` after `setTimeout(500)`.
 - After this story, `grep -r "style={{" packages/builder-react/src/` must return zero results. Fix any stragglers found during implementation.
 
+## Dev Agent Record
+
+### Implementation Notes
+
+- `RightPanel.tsx`: `open` driven purely from `selectedItemId !== null` (no local boolean state). Close button calls `setSelectedItemId(null)`. Fixed positioning via `.MuiDrawer-paper` sx override ensures panel overlays the map without pushing it.
+- `PoiEditor`: icon picker stores the registry key string (e.g. `"restaurant"`) in `poi.icon` — this is a deliberate schema change from URL to key. MapCanvas gracefully ignores non-URL icon values (it renders a plain circle pin regardless). Future story can render the SVG icon on the canvas.
+- `NodeInfo`: `copied` local state resets to `false` after 500 ms timeout via `setTimeout`. The copy call awaits `navigator.clipboard.writeText` to set the flag only on success.
+- `ScaleDialog.tsx`: migrated from overlay `<div>` with raw CSS to MUI `Dialog` with `DialogTitle`, `DialogContent`, `DialogActions`, `ToggleButtonGroup` (distance/time), `TextField`, and `Button`. This also eliminated its raw `style={{` props.
+- `MapCanvas.tsx`: two empty-state `<div style>` screens migrated to MUI `Box sx`. SVG internal `style={{ pointerEvents: 'none' }}` and `style={{ cursor: 'pointer' }}` converted to SVG presentation attributes (`pointerEvents="none"`, `cursor="pointer"`). The `<svg>` element `style={{ width, height, display, cursor }}` replaced by SVG attributes `width`, `height`, `display`, `cursor`.
+- `grep -r "style={{" packages/builder-react/src/` → zero results.
+- 235/235 tests pass; zero TypeScript errors in builder-react.
+
+### File List
+
+- `packages/builder-react/package.json` (modified — added `@resort-map/poi-icons: workspace:*`)
+- `packages/builder-react/src/components/RightPanel.tsx` (new)
+- `packages/builder-react/src/components/Sidebar.tsx` (deleted)
+- `packages/builder-react/src/components/ScaleDialog.tsx` (modified — migrated to MUI Dialog)
+- `packages/builder-react/src/components/MapCanvas.tsx` (modified — Box for empty states, SVG presentation attrs)
+- `packages/builder-react/src/App.tsx` (modified — Sidebar → RightPanel)
+- `bun.lock` (updated)
+
 ## Spec Change Log
 
 | Date | Change |
 |---|---|
 | 2026-06-20 | Initial creation |
+| 2026-06-20 | Implementation complete — all 7 tasks checked, 235/235 tests pass, zero style={{ in src |

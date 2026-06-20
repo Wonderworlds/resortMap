@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import Box from '@mui/material/Box';
 import type { POI, GraphNode, GraphEdge } from '@resort-map/types';
 import { updatePoi as coreUpdatePoi } from '@resort-map/builder-core';
 import { useMapStore } from '../store/mapStore';
@@ -192,35 +193,35 @@ export function MapCanvas(): JSX.Element {
 
   if (!mapConfig) {
     return (
-      <div
-        style={{
+      <Box
+        sx={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
-          color: '#9ca3af',
-          fontSize: '14px',
+          color: 'text.disabled',
+          fontSize: 14,
         }}
       >
         No map loaded. Set a background image URL to get started.
-      </div>
+      </Box>
     );
   }
 
   if (!imageSize) {
     return (
-      <div
-        style={{
+      <Box
+        sx={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
-          color: '#9ca3af',
-          fontSize: '14px',
+          color: 'text.disabled',
+          fontSize: 14,
         }}
       >
         Loading map image…
-      </div>
+      </Box>
     );
   }
 
@@ -253,125 +254,128 @@ export function MapCanvas(): JSX.Element {
 
   return (
     <>
-    <svg
-      ref={svgRef}
-      viewBox={`0 0 ${imageSize.w} ${imageSize.h}`}
-      style={{ width: '100%', height: '100%', display: 'block', cursor }}
-      onPointerDown={onSvgPointerDown}
-      onPointerMove={onSvgPointerMove}
-      onPointerUp={onSvgPointerUp}
-      onPointerLeave={onSvgPointerLeave}
-    >
-      <image
-        href={mapConfig.map.backgroundImageUrl}
-        x={0}
-        y={0}
-        width={imageSize.w}
-        height={imageSize.h}
-      />
-      <g style={{ pointerEvents: 'none' }}>
-        <line
-          x1={mapConfig.map.center.x - 14}
-          y1={mapConfig.map.center.y}
-          x2={mapConfig.map.center.x + 14}
-          y2={mapConfig.map.center.y}
-          stroke="#059669"
-          strokeWidth={2}
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${imageSize.w} ${imageSize.h}`}
+        width="100%"
+        height="100%"
+        display="block"
+        cursor={cursor}
+        onPointerDown={onSvgPointerDown}
+        onPointerMove={onSvgPointerMove}
+        onPointerUp={onSvgPointerUp}
+        onPointerLeave={onSvgPointerLeave}
+      >
+        <image
+          href={mapConfig.map.backgroundImageUrl}
+          x={0}
+          y={0}
+          width={imageSize.w}
+          height={imageSize.h}
         />
-        <line
-          x1={mapConfig.map.center.x}
-          y1={mapConfig.map.center.y - 14}
-          x2={mapConfig.map.center.x}
-          y2={mapConfig.map.center.y + 14}
-          stroke="#059669"
-          strokeWidth={2}
-        />
-        <circle
-          cx={mapConfig.map.center.x}
-          cy={mapConfig.map.center.y}
-          r={5}
-          fill="none"
-          stroke="#059669"
-          strokeWidth={2}
-        />
-      </g>
-      {mapConfig.graph.edges.map((edge) => {
-        const fromNode = nodeById(edge.from);
-        const toNode = nodeById(edge.to);
-        if (!fromNode || !toNode) return null;
-        const edgeKey = `${edge.from}:${edge.to}`;
-        return (
-          <RoadEdge
-            key={edgeKey}
-            edge={edge}
-            fromNode={fromNode}
-            toNode={toNode}
-            isSelected={selectedItemId === edgeKey}
-            onPointerDown={(e) => onEdgePointerDown(e, edge.from, edge.to)}
-          />
-        );
-      })}
-      {mapConfig.graph.nodes.map((node) => (
-        <RoadNode
-          key={node.id}
-          node={node}
-          isSelected={selectedItemId === node.id}
-          isChainEnd={streetLastNodeId === node.id}
-          onPointerDown={(e) => onNodePointerDown(e, node.id)}
-        />
-      ))}
-      {mapConfig.pois.map((poi) => (
-        <PoiPin
-          key={poi.id}
-          poi={poi}
-          isSelected={poi.id === selectedItemId}
-          onPointerDown={(e) => onPinPointerDown(e, poi.id)}
-        />
-      ))}
-      {activeTool === 'drawStreet' && streetLastNodeId && hoverPos && (() => {
-        const anchor = mapConfig.graph.nodes.find((n) => n.id === streetLastNodeId);
-        if (!anchor) return null;
-        return (
+        <g pointerEvents="none">
           <line
-            x1={anchor.position.x} y1={anchor.position.y}
-            x2={hoverPos.x} y2={hoverPos.y}
-            stroke="#6b7280" strokeWidth={2} strokeDasharray="6 4"
-            style={{ pointerEvents: 'none' }}
+            x1={mapConfig.map.center.x - 14}
+            y1={mapConfig.map.center.y}
+            x2={mapConfig.map.center.x + 14}
+            y2={mapConfig.map.center.y}
+            stroke="#059669"
+            strokeWidth={2}
           />
-        );
-      })()}
-      {activeTool === 'placePoi' && hoverPos && (
-        <g style={{ pointerEvents: 'none' }}>
-          <circle cx={hoverPos.x} cy={hoverPos.y} r={10} fill="#ef4444" stroke="#b91c1c" strokeWidth={2} opacity={0.5} />
-          <text x={hoverPos.x + 14} y={hoverPos.y + 4} fontSize={12} fill="#ef4444" stroke="white" strokeWidth={3} paintOrder="stroke">
-            {`(${hoverPos.x}, ${hoverPos.y})`}
-          </text>
+          <line
+            x1={mapConfig.map.center.x}
+            y1={mapConfig.map.center.y - 14}
+            x2={mapConfig.map.center.x}
+            y2={mapConfig.map.center.y + 14}
+            stroke="#059669"
+            strokeWidth={2}
+          />
+          <circle
+            cx={mapConfig.map.center.x}
+            cy={mapConfig.map.center.y}
+            r={5}
+            fill="none"
+            stroke="#059669"
+            strokeWidth={2}
+          />
         </g>
+        {mapConfig.graph.edges.map((edge) => {
+          const fromNode = nodeById(edge.from);
+          const toNode = nodeById(edge.to);
+          if (!fromNode || !toNode) return null;
+          const edgeKey = `${edge.from}:${edge.to}`;
+          return (
+            <RoadEdge
+              key={edgeKey}
+              edge={edge}
+              fromNode={fromNode}
+              toNode={toNode}
+              isSelected={selectedItemId === edgeKey}
+              onPointerDown={(e) => onEdgePointerDown(e, edge.from, edge.to)}
+            />
+          );
+        })}
+        {mapConfig.graph.nodes.map((node) => (
+          <RoadNode
+            key={node.id}
+            node={node}
+            isSelected={selectedItemId === node.id}
+            isChainEnd={streetLastNodeId === node.id}
+            onPointerDown={(e) => onNodePointerDown(e, node.id)}
+          />
+        ))}
+        {mapConfig.pois.map((poi) => (
+          <PoiPin
+            key={poi.id}
+            poi={poi}
+            isSelected={poi.id === selectedItemId}
+            onPointerDown={(e) => onPinPointerDown(e, poi.id)}
+          />
+        ))}
+        {activeTool === 'drawStreet' && streetLastNodeId && hoverPos && (() => {
+          const anchor = mapConfig.graph.nodes.find((n) => n.id === streetLastNodeId);
+          if (!anchor) return null;
+          return (
+            <line
+              x1={anchor.position.x} y1={anchor.position.y}
+              x2={hoverPos.x} y2={hoverPos.y}
+              stroke="#6b7280" strokeWidth={2} strokeDasharray="6 4"
+              pointerEvents="none"
+            />
+          );
+        })()}
+        {activeTool === 'placePoi' && hoverPos && (
+          <g pointerEvents="none">
+            <circle cx={hoverPos.x} cy={hoverPos.y} r={10} fill="#ef4444" stroke="#b91c1c" strokeWidth={2} opacity={0.5} />
+            <text x={hoverPos.x + 14} y={hoverPos.y + 4} fontSize={12} fill="#ef4444" stroke="white" strokeWidth={3} paintOrder="stroke">
+              {`(${hoverPos.x}, ${hoverPos.y})`}
+            </text>
+          </g>
+        )}
+        {activeTool === 'setScale' && (
+          <g pointerEvents="none">
+            {scalePoint1 && <ScaleMarker pos={scalePoint1} />}
+            {scalePoint1 && !scalePoint2 && hoverPos && (
+              <line x1={scalePoint1.x} y1={scalePoint1.y} x2={hoverPos.x} y2={hoverPos.y}
+                stroke="#f59e0b" strokeWidth={2} strokeDasharray="6 3" />
+            )}
+            {scalePoint1 && scalePoint2 && (
+              <>
+                <line x1={scalePoint1.x} y1={scalePoint1.y} x2={scalePoint2.x} y2={scalePoint2.y}
+                  stroke="#f59e0b" strokeWidth={2} />
+                <ScaleMarker pos={scalePoint2} />
+              </>
+            )}
+          </g>
+        )}
+      </svg>
+      {showScaleDialog && scalePoint1 && scalePoint2 && (
+        <ScaleDialog
+          pixelDistance={scalePixelDist}
+          onConfirm={onScaleConfirm}
+          onCancel={onScaleCancel}
+        />
       )}
-      {activeTool === 'setScale' && (
-        <g style={{ pointerEvents: 'none' }}>
-          {scalePoint1 && <ScaleMarker pos={scalePoint1} />}
-          {scalePoint1 && !scalePoint2 && hoverPos && (
-            <line x1={scalePoint1.x} y1={scalePoint1.y} x2={hoverPos.x} y2={hoverPos.y}
-              stroke="#f59e0b" strokeWidth={2} strokeDasharray="6 3" />
-          )}
-          {scalePoint1 && scalePoint2 && (
-            <>
-              <line x1={scalePoint1.x} y1={scalePoint1.y} x2={scalePoint2.x} y2={scalePoint2.y}
-                stroke="#f59e0b" strokeWidth={2} />
-              <ScaleMarker pos={scalePoint2} />
-            </>
-          )}
-        </g>
-      )}
-    </svg>
-    {showScaleDialog && scalePoint1 && scalePoint2 && (
-      <ScaleDialog
-        pixelDistance={scalePixelDist}
-        onConfirm={onScaleConfirm}
-        onCancel={onScaleCancel}
-      />
-    )}
     </>
   );
 }
@@ -417,7 +421,7 @@ interface RoadNodeProps {
 function RoadNode({ node, isSelected, isChainEnd, onPointerDown }: RoadNodeProps): JSX.Element {
   const { x, y } = node.position;
   return (
-    <g data-node-id={node.id} onPointerDown={onPointerDown} style={{ cursor: 'pointer' }}>
+    <g data-node-id={node.id} onPointerDown={onPointerDown} cursor="pointer">
       {isChainEnd && (
         <rect x={x - 10} y={y - 10} width={20} height={20} fill="none" stroke="#f59e0b" strokeWidth={3} rx={3} />
       )}
@@ -443,7 +447,7 @@ interface PoiPinProps {
 
 function PoiPin({ poi, isSelected, onPointerDown }: PoiPinProps): JSX.Element {
   return (
-    <g data-poi-id={poi.id} onPointerDown={onPointerDown} style={{ cursor: 'pointer' }}>
+    <g data-poi-id={poi.id} onPointerDown={onPointerDown} cursor="pointer">
       <circle
         cx={poi.position.x}
         cy={poi.position.y}

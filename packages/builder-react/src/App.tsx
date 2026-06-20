@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { AppBar } from './components/AppBar';
 import { LeftPanel } from './components/LeftPanel';
 import { MapCanvas } from './components/MapCanvas';
-import { Sidebar } from './components/Sidebar';
+import { RightPanel } from './components/RightPanel';
 import { useMapStore } from './store/mapStore';
 
 export function App(): JSX.Element {
@@ -35,8 +35,9 @@ export function App(): JSX.Element {
         <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
           <MapCanvas />
         </Box>
-        <Sidebar />
       </Box>
+      {/* RightPanel uses position:fixed, so it sits outside the flex row */}
+      <RightPanel />
     </Box>
   );
 }
