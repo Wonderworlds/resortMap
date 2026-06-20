@@ -24,10 +24,12 @@ interface MapStore {
   activeTool: ActiveTool;
   selectedItemId: string | null;
   undoStack: MapConfig[];
+  redoStack: MapConfig[];
 
   setActiveTool: (tool: ActiveTool) => void;
   setSelectedItemId: (id: string | null) => void;
   undo: () => void;
+  redo: () => void;
   initMap: (meta: MapMeta) => void;
   addPoi: (poi: Omit<POI, 'id'>) => void;
   removePoi: (poiId: string) => void;
@@ -44,6 +46,7 @@ export const useMapStore = create<MapStore>()((set) => ({
   activeTool: 'select',
   selectedItemId: null,
   undoStack: [],
+  redoStack: [],
 
   setActiveTool: (tool) => set({ activeTool: tool }),
 
@@ -53,11 +56,30 @@ export const useMapStore = create<MapStore>()((set) => ({
     set((state) => {
       if (state.undoStack.length === 0) return {};
       const prev = state.undoStack[state.undoStack.length - 1]!;
-      return { mapConfig: prev, undoStack: state.undoStack.slice(0, -1) };
+      return {
+        mapConfig: prev,
+        undoStack: state.undoStack.slice(0, -1),
+        redoStack: state.mapConfig !== null
+          ? [...state.redoStack.slice(-(MAX_UNDO - 1)), state.mapConfig]
+          : state.redoStack,
+      };
+    }),
+
+  redo: () =>
+    set((state) => {
+      if (state.redoStack.length === 0) return {};
+      const next = state.redoStack[state.redoStack.length - 1]!;
+      return {
+        mapConfig: next,
+        redoStack: state.redoStack.slice(0, -1),
+        undoStack: state.mapConfig !== null
+          ? pushUndo(state.undoStack, state.mapConfig)
+          : state.undoStack,
+      };
     }),
 
   initMap: (meta) =>
-    set({ mapConfig: createMapConfig(meta), undoStack: [], selectedItemId: null }),
+    set({ mapConfig: createMapConfig(meta), undoStack: [], redoStack: [], selectedItemId: null }),
 
   addPoi: (poi) =>
     set((state) => {
@@ -65,6 +87,7 @@ export const useMapStore = create<MapStore>()((set) => ({
       return {
         mapConfig: coreAddPoi(state.mapConfig, poi),
         undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
       };
     }),
 
@@ -74,6 +97,7 @@ export const useMapStore = create<MapStore>()((set) => ({
       return {
         mapConfig: coreRemovePoi(state.mapConfig, poiId),
         undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
         selectedItemId: state.selectedItemId === poiId ? null : state.selectedItemId,
       };
     }),
@@ -84,6 +108,7 @@ export const useMapStore = create<MapStore>()((set) => ({
       return {
         mapConfig: coreUpdatePoi(state.mapConfig, poiId, patch),
         undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
       };
     }),
 
@@ -93,6 +118,7 @@ export const useMapStore = create<MapStore>()((set) => ({
       return {
         mapConfig: coreAddNode(state.mapConfig, node),
         undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
       };
     }),
 
@@ -112,6 +138,7 @@ export const useMapStore = create<MapStore>()((set) => ({
       return {
         mapConfig: coreRemoveNode(state.mapConfig, nodeId),
         undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
         selectedItemId: shouldClearSelection ? null : current,
       };
     }),
@@ -122,6 +149,7 @@ export const useMapStore = create<MapStore>()((set) => ({
       return {
         mapConfig: coreAddEdge(state.mapConfig, edge),
         undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
       };
     }),
 
@@ -132,6 +160,7 @@ export const useMapStore = create<MapStore>()((set) => ({
       return {
         mapConfig: coreRemoveEdge(state.mapConfig, from, to),
         undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
         selectedItemId: state.selectedItemId === edgeKey ? null : state.selectedItemId,
       };
     }),
@@ -142,6 +171,7 @@ export const useMapStore = create<MapStore>()((set) => ({
       return {
         mapConfig: { ...state.mapConfig, map: { ...state.mapConfig.map, ...patch } },
         undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
       };
     }),
 }));

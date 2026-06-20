@@ -6,6 +6,10 @@
     "dev": "bun --hot index.ts"
   },
   "dependencies": {
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@mui/icons-material": "^6",
+    "@mui/material": "^6",
     "@resort-map/builder-core": "workspace:*",
     "@resort-map/types": "workspace:*",
     "zustand": "catalog:"

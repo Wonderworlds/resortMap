@@ -14,6 +14,7 @@ beforeEach(() => {
     activeTool: 'select',
     selectedItemId: null,
     undoStack: [],
+    redoStack: [],
   });
 });
 
@@ -271,6 +272,76 @@ describe('removeNode — stale edge selection fix', () => {
     useMapStore.setState({ selectedItemId: poiId });
     useMapStore.getState().removeNode(nodeA.id);
     expect(useMapStore.getState().selectedItemId).toBe(poiId);
+  });
+});
+
+describe('redo', () => {
+  test('redoStack is empty on init', () => {
+    useMapStore.getState().initMap(validMeta);
+    expect(useMapStore.getState().redoStack).toHaveLength(0);
+  });
+
+  test('undo pushes displaced mapConfig onto redoStack (AC-3)', () => {
+    useMapStore.getState().initMap(validMeta);
+    useMapStore.getState().addPoi({ label: 'A', position: { x: 0, y: 0 }, tags: [] });
+    const configWithPoi = useMapStore.getState().mapConfig!;
+    useMapStore.getState().undo();
+    const s = useMapStore.getState();
+    expect(s.mapConfig?.pois).toHaveLength(0);
+    expect(s.redoStack).toHaveLength(1);
+    expect(s.redoStack[0]).toBe(configWithPoi);
+  });
+
+  test('redo pops redoStack and restores mapConfig (AC-4)', () => {
+    useMapStore.getState().initMap(validMeta);
+    useMapStore.getState().addPoi({ label: 'A', position: { x: 0, y: 0 }, tags: [] });
+    const configWithPoi = useMapStore.getState().mapConfig!;
+    useMapStore.getState().undo();
+    useMapStore.getState().redo();
+    const s = useMapStore.getState();
+    expect(s.mapConfig).toBe(configWithPoi);
+    expect(s.redoStack).toHaveLength(0);
+    expect(s.undoStack).toHaveLength(1);
+  });
+
+  test('redo pushes current config back onto undoStack (AC-4)', () => {
+    useMapStore.getState().initMap(validMeta);
+    useMapStore.getState().addPoi({ label: 'A', position: { x: 0, y: 0 }, tags: [] });
+    useMapStore.getState().undo();
+    const configBeforeRedo = useMapStore.getState().mapConfig!;
+    useMapStore.getState().redo();
+    expect(useMapStore.getState().undoStack.at(-1)).toBe(configBeforeRedo);
+  });
+
+  test('mutating action clears redoStack (AC-5)', () => {
+    useMapStore.getState().initMap(validMeta);
+    useMapStore.getState().addPoi({ label: 'A', position: { x: 0, y: 0 }, tags: [] });
+    useMapStore.getState().undo();
+    expect(useMapStore.getState().redoStack).toHaveLength(1);
+    useMapStore.getState().addPoi({ label: 'B', position: { x: 10, y: 10 }, tags: [] });
+    expect(useMapStore.getState().redoStack).toHaveLength(0);
+  });
+
+  test('redo does nothing when redoStack is empty', () => {
+    useMapStore.getState().initMap(validMeta);
+    const config = useMapStore.getState().mapConfig!;
+    useMapStore.getState().redo();
+    expect(useMapStore.getState().mapConfig).toBe(config);
+  });
+
+  test('multiple undo-redo cycles work correctly', () => {
+    useMapStore.getState().initMap(validMeta);
+    useMapStore.getState().addPoi({ label: 'A', position: { x: 0, y: 0 }, tags: [] });
+    useMapStore.getState().addPoi({ label: 'B', position: { x: 1, y: 1 }, tags: [] });
+    useMapStore.getState().undo(); // undo B
+    useMapStore.getState().undo(); // undo A
+    expect(useMapStore.getState().mapConfig?.pois).toHaveLength(0);
+    expect(useMapStore.getState().redoStack).toHaveLength(2);
+    useMapStore.getState().redo(); // redo A
+    expect(useMapStore.getState().mapConfig?.pois).toHaveLength(1);
+    useMapStore.getState().redo(); // redo B
+    expect(useMapStore.getState().mapConfig?.pois).toHaveLength(2);
+    expect(useMapStore.getState().redoStack).toHaveLength(0);
   });
 });
 
