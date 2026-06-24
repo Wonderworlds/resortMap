@@ -1,6 +1,10 @@
+---
+baseline_commit: f98388ea017f3bc6896c6d3ec047d7f40c567517
+---
+
 # Story 7.5: Center Canvas — Mode Toggle Bar + Preview Mode
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -24,36 +28,36 @@ So that I can instantly see the visitor experience without leaving the tool.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add `@resort-map/view-react` dependency to `builder-react/package.json` and run `bun install` (AC: 5)
-  - [ ] 1.1 Add `"@resort-map/view-react": "workspace:*"` to the `dependencies` object in `packages/builder-react/package.json`
-  - [ ] 1.2 Run `bun install` from the workspace root `/home/fmauguin/Documents/resortMap` to link the workspace package
+- [x] Task 1: Add `@resort-map/view-react` dependency to `builder-react/package.json` and run `bun install` (AC: 5)
+  - [x] 1.1 Add `"@resort-map/view-react": "workspace:*"` to the `dependencies` object in `packages/builder-react/package.json`
+  - [x] 1.2 Run `bun install` from the workspace root `/home/fmauguin/Documents/resortMap` to link the workspace package
 
-- [ ] Task 2: Create `packages/builder-react/src/components/CenterCanvas.tsx` (AC: 1, 2, 3, 4)
-  - [ ] 2.1 Import `useState` from `'react'`
-  - [ ] 2.2 Import MUI: `Box`, `ToggleButtonGroup`, `ToggleButton`, `Typography`
-  - [ ] 2.3 Import `MapViewer` from `'@resort-map/view-react'`
-  - [ ] 2.4 Import `useMapStore` from `'../store/mapStore'`
-  - [ ] 2.5 Import `MapCanvas` from `'./MapCanvas'`
-  - [ ] 2.6 Define local `type Mode = 'builder' | 'preview'`
-  - [ ] 2.7 Implement `handleModeChange(_: React.MouseEvent, newMode: Mode | null): void` — only update if `newMode !== null` (MUI ToggleButtonGroup fires null when clicking the already-selected button)
-  - [ ] 2.8 Subscribe `mapConfig` from `useMapStore((s) => s.mapConfig)` (preview needs it to pass to MapViewer)
-  - [ ] 2.9 Render outer `<Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>`
-  - [ ] 2.10 Render Mode Toggle Bar: `<Box sx={{ display: 'flex', justifyContent: 'center', p: 1, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>` containing a `<ToggleButtonGroup exclusive size="small" value={mode} onChange={handleModeChange} aria-label="canvas mode">` with two `<ToggleButton>` children
-  - [ ] 2.11 Each ToggleButton uses `sx={{ px: 3, '&.Mui-selected': { bgcolor: 'primary.main', color: 'primary.contrastText', '&:hover': { bgcolor: 'primary.dark' } } }}`
-  - [ ] 2.12 Render canvas area `<Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>` containing:
+- [x] Task 2: Create `packages/builder-react/src/components/CenterCanvas.tsx` (AC: 1, 2, 3, 4)
+  - [x] 2.1 Import `useState` from `'react'`
+  - [x] 2.2 Import MUI: `Box`, `ToggleButtonGroup`, `ToggleButton`, `Typography`
+  - [x] 2.3 Import `MapViewer` from `'@resort-map/view-react'`
+  - [x] 2.4 Import `useMapStore` from `'../store/mapStore'`
+  - [x] 2.5 Import `MapCanvas` from `'./MapCanvas'`
+  - [x] 2.6 Define local `type Mode = 'builder' | 'preview'`
+  - [x] 2.7 Implement `handleModeChange(_: React.MouseEvent, newMode: Mode | null): void` — only update if `newMode !== null` (MUI ToggleButtonGroup fires null when clicking the already-selected button)
+  - [x] 2.8 Subscribe `mapConfig` from `useMapStore((s) => s.mapConfig)` (preview needs it to pass to MapViewer)
+  - [x] 2.9 Render outer `<Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>`
+  - [x] 2.10 Render Mode Toggle Bar: `<Box sx={{ display: 'flex', justifyContent: 'center', p: 1, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>` containing a `<ToggleButtonGroup exclusive size="small" value={mode} onChange={handleModeChange} aria-label="canvas mode">` with two `<ToggleButton>` children
+  - [x] 2.11 Each ToggleButton uses `sx={{ px: 3, '&.Mui-selected': { bgcolor: 'primary.main', color: 'primary.contrastText', '&:hover': { bgcolor: 'primary.dark' } } }}`
+  - [x] 2.12 Render canvas area `<Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>` containing:
     - `<Box sx={{ display: mode === 'builder' ? 'block' : 'none', height: '100%', position: 'relative' }}><MapCanvas /></Box>` — always mounted, hidden via CSS in preview mode (preserves zoom/pan state per NFR-1)
     - `{mode === 'preview' && (mapConfig ? <MapViewer source={mapConfig} preview={true} /> : <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><Typography color="text.secondary">No map loaded</Typography></Box>)}`
 
-- [ ] Task 3: Update `packages/builder-react/src/App.tsx` to use `CenterCanvas` (AC: 1, 2, 3)
-  - [ ] 3.1 Add `import { CenterCanvas } from './components/CenterCanvas'`
-  - [ ] 3.2 Replace the center canvas Box:
+- [x] Task 3: Update `packages/builder-react/src/App.tsx` to use `CenterCanvas` (AC: 1, 2, 3)
+  - [x] 3.1 Add `import { CenterCanvas } from './components/CenterCanvas'`
+  - [x] 3.2 Replace the center canvas Box:
     - REMOVE: `<Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}><MapCanvas /></Box>`
     - REMOVE: `import { MapCanvas } from './components/MapCanvas'` (no longer used in App.tsx)
     - ADD: `<CenterCanvas />`
-  - [ ] 3.3 Verify the outer flex row Box still has `flex: 1, overflow: 'hidden'` and CenterCanvas is a flex child
+  - [x] 3.3 Verify the outer flex row Box still has `flex: 1, overflow: 'hidden'` and CenterCanvas is a flex child
 
-- [ ] Task 4: Run full test suite (AC: 6)
-  - [ ] 4.1 Run `bun test` from workspace root — confirm all 276 tests pass, zero regressions
+- [x] Task 4: Run full test suite (AC: 6)
+  - [x] 4.1 Run `bun test` from workspace root — confirm all 276 tests pass, zero regressions
 
 ## Dev Notes
 
@@ -304,6 +308,21 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+_None_
+
 ### Completion Notes List
 
+- Added `@resort-map/view-react: workspace:*` to `builder-react/package.json` dependencies (alphabetical order). `bun install` resolved and symlinked the workspace package.
+- Created `CenterCanvas.tsx`: outer flex column containing a MUI ToggleButtonGroup (Builder/Preview) above the canvas area. MapCanvas is always mounted, hidden via `display: none` in preview mode to preserve local pan/zoom state (NFR-1). In preview mode renders `<MapViewer source={mapConfig} preview={true} />` or a "No map loaded" empty state when mapConfig is null.
+- Updated `App.tsx`: replaced `<Box …><MapCanvas /></Box>` with `<CenterCanvas />` and removed the unused `MapCanvas` import. CenterCanvas's own `flex: 1` makes it behave identically as a flex child.
+- All 276 existing tests pass with zero regressions (`bun test`, 1121ms).
+
 ### File List
+
+- `packages/builder-react/package.json` (modified — added `@resort-map/view-react` dependency)
+- `packages/builder-react/src/components/CenterCanvas.tsx` (created)
+- `packages/builder-react/src/App.tsx` (modified — swapped MapCanvas import/usage for CenterCanvas)
+
+## Change Log
+
+- 2026-06-24: Implemented story 7-5 — added view-react workspace dependency, created CenterCanvas component with Builder/Preview mode toggle, updated App.tsx. All 276 tests pass.
