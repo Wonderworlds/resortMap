@@ -1,14 +1,23 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
+import { ThemeProvider } from '@mui/material/styles';
 import { AppBar } from './components/AppBar';
 import { LeftPanel } from './components/LeftPanel';
 import { MapCanvas } from './components/MapCanvas';
 import { RightPanel } from './components/RightPanel';
 import { useMapStore } from './store/mapStore';
+import { createAppTheme } from './theme';
+import type { ThemeConfig } from './theme';
 
-export function App(): JSX.Element {
+export interface AppProps {
+  themeConfig?: ThemeConfig;
+}
+
+export function App({ themeConfig }: AppProps): JSX.Element {
   const undo = useMapStore((s) => s.undo);
   const redo = useMapStore((s) => s.redo);
+
+  const theme = useMemo(() => createAppTheme(themeConfig), [themeConfig]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent): void {
@@ -28,16 +37,18 @@ export function App(): JSX.Element {
   }, [undo, redo]);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <AppBar />
-      <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <LeftPanel />
-        <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-          <MapCanvas />
+    <ThemeProvider theme={theme}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <AppBar />
+        <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+          <LeftPanel />
+          <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+            <MapCanvas />
+          </Box>
         </Box>
+        {/* RightPanel uses position:fixed, so it sits outside the flex row */}
+        <RightPanel />
       </Box>
-      {/* RightPanel uses position:fixed, so it sits outside the flex row */}
-      <RightPanel />
-    </Box>
+    </ThemeProvider>
   );
 }

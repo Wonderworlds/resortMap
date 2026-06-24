@@ -112,7 +112,7 @@ development_status:
   # ──────────────────────────────────────────────────────────────────
   epic-7: in-progress
   7-1-view-react-preview-prop: review
-  7-2-mui-theme-system-and-themeconfig-prop: backlog
+  7-2-mui-theme-system-and-themeconfig-prop: review
   7-3-top-nav-bar-save-export-undo-redo-quit: backlog
   7-4-left-panel-two-tab-shell-tools-tab-map-config: backlog
   7-5-center-canvas-mode-toggle-bar-and-preview-mode: backlog
