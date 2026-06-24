@@ -1,9 +1,12 @@
+import { useRef, useState } from 'react';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import ToggleButton from '@mui/material/ToggleButton';
+import ButtonBase from '@mui/material/ButtonBase';
+import Tooltip from '@mui/material/Tooltip';
 import NearMeIcon from '@mui/icons-material/NearMe';
 import AddLocationIcon from '@mui/icons-material/AddLocation';
 import TimelineIcon from '@mui/icons-material/Timeline';
@@ -27,12 +30,22 @@ export function LeftPanel(): JSX.Element {
   const activeTool = useMapStore((s) => s.activeTool);
   const setActiveTool = useMapStore((s) => s.setActiveTool);
 
-  function handleToolChange(_: React.MouseEvent, value: ActiveTool | null): void {
-    if (value !== null) setActiveTool(value);
+  const [activeTab, setActiveTab] = useState(0);
+  const prevToolRef = useRef<ActiveTool>(activeTool);
+
+  function handleTabChange(_: React.SyntheticEvent, newTab: number): void {
+    if (newTab === 1) {
+      prevToolRef.current = activeTool;
+      setActiveTool('select');
+    } else if (newTab === 0) {
+      setActiveTool(prevToolRef.current);
+    }
+    setActiveTab(newTab);
   }
 
-  // Only highlight palette tools; setCenter is activated via the Map Config section
-  const paletteValue = TOOL_BUTTONS.some((t) => t.value === activeTool) ? activeTool : null;
+  function handleToolSelect(tool: ActiveTool): void {
+    setActiveTool(tool);
+  }
 
   return (
     <Drawer
@@ -45,38 +58,75 @@ export function LeftPanel(): JSX.Element {
           width: DRAWER_WIDTH,
           boxSizing: 'border-box',
           position: 'relative',
-          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
         },
       }}
     >
-      <Box sx={{ p: 1.5 }}>
-        <Typography variant="overline" sx={{ display: 'block', mb: 0.5 }}>
-          Tools
-        </Typography>
+      <Tabs
+        value={activeTab}
+        onChange={handleTabChange}
+        variant="fullWidth"
+        indicatorColor="primary"
+        textColor="primary"
+      >
+        <Tab label="Tools" />
+        <Tab label="Content" />
+      </Tabs>
 
-        <ToggleButtonGroup
-          orientation="vertical"
-          exclusive
-          value={paletteValue}
-          onChange={handleToolChange}
-          fullWidth
-          size="small"
-        >
-          {TOOL_BUTTONS.map(({ value, label, Icon }) => (
-            <ToggleButton key={value} value={value} sx={{ justifyContent: 'flex-start', gap: 1 }}>
-              <Icon />
-              {label}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
+      <Box sx={{ flex: 1, overflow: 'auto' }}>
+        {activeTab === 0 && (
+          <Box sx={{ p: 1.5 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
+              {TOOL_BUTTONS.map(({ value, label, Icon }) => {
+                const isActive = activeTool === value;
+                return (
+                  <Tooltip title={label} key={value}>
+                    <span>
+                      <ButtonBase
+                        onClick={() => handleToolSelect(value)}
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 0.5,
+                          height: 72,
+                          width: '100%',
+                          border: '1px solid',
+                          borderRadius: 1,
+                          borderColor: isActive ? 'primary.main' : 'divider',
+                          bgcolor: isActive ? 'primary.main' : 'background.paper',
+                          color: isActive ? 'primary.contrastText' : 'text.primary',
+                          transition: 'background-color 0.15s, color 0.15s, border-color 0.15s',
+                          '&:hover': { bgcolor: isActive ? 'primary.dark' : 'action.hover' },
+                        }}
+                      >
+                        <Icon />
+                        <Typography variant="caption" sx={{ lineHeight: 1.2 }}>
+                          {label}
+                        </Typography>
+                      </ButtonBase>
+                    </span>
+                  </Tooltip>
+                );
+              })}
+            </Box>
 
-        <Divider sx={{ my: 2 }} />
+            <Divider sx={{ my: 2 }} />
 
-        <Typography variant="overline" sx={{ display: 'block', mb: 1 }}>
-          Map Properties
-        </Typography>
+            <Typography variant="overline" sx={{ display: 'block', mb: 1 }}>
+              Map Config
+            </Typography>
 
-        <MapMetaPanel />
+            <MapMetaPanel />
+          </Box>
+        )}
+
+        {activeTab === 1 && (
+          <Box sx={{ flex: 1 }} />
+        )}
       </Box>
     </Drawer>
   );
