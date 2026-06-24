@@ -15,6 +15,7 @@ beforeEach(() => {
     selectedItemId: null,
     undoStack: [],
     redoStack: [],
+    savedMapConfig: null,
   });
 });
 
@@ -386,5 +387,26 @@ describe('updateMapMeta', () => {
     useMapStore.getState().updateMapMeta({ backgroundImageUrl: 'http://x.jpg' });
     expect(useMapStore.getState().mapConfig).toBeNull();
     expect(useMapStore.getState().undoStack.length).toBe(0);
+  });
+});
+
+describe('savedMapConfig', () => {
+  test('initial state is null', () => {
+    expect(useMapStore.getState().savedMapConfig).toBeNull();
+  });
+
+  test('setSavedMapConfig updates savedMapConfig', () => {
+    useMapStore.getState().initMap(validMeta);
+    const config = useMapStore.getState().mapConfig!;
+    useMapStore.getState().setSavedMapConfig(config);
+    expect(useMapStore.getState().savedMapConfig).toBe(config);
+  });
+
+  test('setSavedMapConfig(null) resets to null', () => {
+    useMapStore.getState().initMap(validMeta);
+    const config = useMapStore.getState().mapConfig!;
+    useMapStore.getState().setSavedMapConfig(config);
+    useMapStore.getState().setSavedMapConfig(null);
+    expect(useMapStore.getState().savedMapConfig).toBeNull();
   });
 });

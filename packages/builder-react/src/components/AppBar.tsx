@@ -15,7 +15,13 @@ import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import CloseIcon from '@mui/icons-material/Close';
 import { serializeGwmap } from '@resort-map/builder-core';
+import type { MapConfig } from '@resort-map/types';
 import { useMapStore } from '../store/mapStore';
+
+export interface AppBarProps {
+  onSave?: (config: MapConfig) => void;
+  onQuit?: () => void;
+}
 
 function downloadGwmap(): void {
   const mapConfig = useMapStore.getState().mapConfig;
@@ -30,8 +36,9 @@ function downloadGwmap(): void {
   URL.revokeObjectURL(url);
 }
 
-export function AppBar(): JSX.Element {
+export function AppBar({ onSave, onQuit }: AppBarProps): JSX.Element {
   const mapConfig = useMapStore((s) => s.mapConfig);
+  const savedMapConfig = useMapStore((s) => s.savedMapConfig);
   const undoStack = useMapStore((s) => s.undoStack);
   const redoStack = useMapStore((s) => s.redoStack);
   const undo = useMapStore((s) => s.undo);
@@ -44,10 +51,32 @@ export function AppBar(): JSX.Element {
   const canUndo = undoStack.length > 0;
   const canRedo = redoStack.length > 0;
 
+  function handleSave(): void {
+    const { mapConfig: currentConfig, setSavedMapConfig } = useMapStore.getState();
+    if (!currentConfig) return;
+    if (onSave) {
+      onSave(currentConfig);
+    } else {
+      downloadGwmap();
+    }
+    setSavedMapConfig(currentConfig);
+  }
+
   function handleQuitConfirm(): void {
     setShowQuitDialog(false);
-    // TODO: differentiate Save vs Export when server target exists
-    initMap({ backgroundImageUrl: '', center: { x: 0, y: 0 }, scale: 1 });
+    if (onQuit) {
+      onQuit();
+    } else {
+      initMap({ backgroundImageUrl: '', center: { x: 0, y: 0 }, scale: 1 });
+    }
+  }
+
+  function handleQuitClick(): void {
+    if (mapConfig !== savedMapConfig) {
+      setShowQuitDialog(true);
+    } else {
+      handleQuitConfirm();
+    }
   }
 
   return (
@@ -55,16 +84,15 @@ export function AppBar(): JSX.Element {
       <MuiAppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ mr: 2 }}>
-            ResortMap
+            ResortMap Builder
           </Typography>
 
           <Box sx={{ display: 'flex', gap: 1, flexGrow: 1 }}>
-            {/* TODO: differentiate Save vs Export when server target exists */}
             <Button
               variant="contained"
               color="inherit"
               disabled={!hasMap}
-              onClick={downloadGwmap}
+              onClick={handleSave}
               sx={{ color: 'primary.main', bgcolor: 'white', '&:hover': { bgcolor: 'grey.100' } }}
             >
               Save
@@ -108,7 +136,7 @@ export function AppBar(): JSX.Element {
             <Tooltip title="Quit">
               <IconButton
                 color="inherit"
-                onClick={() => setShowQuitDialog(true)}
+                onClick={handleQuitClick}
                 aria-label="Quit"
               >
                 <CloseIcon />

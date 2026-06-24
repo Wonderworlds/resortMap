@@ -8,12 +8,15 @@ import { RightPanel } from './components/RightPanel';
 import { useMapStore } from './store/mapStore';
 import { createAppTheme } from './theme';
 import type { ThemeConfig } from './theme';
+import type { MapConfig } from '@resort-map/types';
 
 export interface AppProps {
   themeConfig?: ThemeConfig;
+  onSave?: (config: MapConfig) => void;
+  onQuit?: () => void;
 }
 
-export function App({ themeConfig }: AppProps): JSX.Element {
+export function App({ themeConfig, onSave, onQuit }: AppProps): JSX.Element {
   const undo = useMapStore((s) => s.undo);
   const redo = useMapStore((s) => s.redo);
 
@@ -39,7 +42,7 @@ export function App({ themeConfig }: AppProps): JSX.Element {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-        <AppBar />
+        <AppBar onSave={onSave} onQuit={onQuit} />
         <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
           <LeftPanel />
           <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>

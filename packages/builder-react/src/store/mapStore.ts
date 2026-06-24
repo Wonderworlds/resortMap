@@ -45,6 +45,8 @@ interface MapStore {
   addEdge: (edge: GraphEdge) => void;
   removeEdge: (from: string, to: string) => void;
   updateMapMeta: (patch: Partial<MapMeta>) => void;
+  savedMapConfig: MapConfig | null;
+  setSavedMapConfig: (config: MapConfig | null) => void;
 }
 
 export const useMapStore = create<MapStore>()((set) => ({
@@ -53,6 +55,7 @@ export const useMapStore = create<MapStore>()((set) => ({
   selectedItemId: null,
   undoStack: [],
   redoStack: [],
+  savedMapConfig: null,
 
   setActiveTool: (tool) => set({ activeTool: tool }),
 
@@ -210,4 +213,6 @@ export const useMapStore = create<MapStore>()((set) => ({
         redoStack: [],
       };
     }),
+
+  setSavedMapConfig: (config) => set({ savedMapConfig: config }),
 }));
