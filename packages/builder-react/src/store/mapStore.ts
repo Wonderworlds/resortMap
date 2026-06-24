@@ -14,7 +14,7 @@ import {
   removeEdge as coreRemoveEdge,
 } from '@resort-map/builder-core';
 
-export type ActiveTool = 'select' | 'placePoi' | 'drawStreet' | 'setCenter' | 'setScale';
+export type ActiveTool = 'select' | 'placePoi' | 'drawStreet' | 'setCenter' | 'setScale' | 'pan';
 
 const MAX_UNDO = 50;
 

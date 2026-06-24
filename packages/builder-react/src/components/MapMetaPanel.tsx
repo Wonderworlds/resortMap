@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import type { MapMeta } from '@resort-map/types';
 import { useMapStore } from '../store/mapStore';
 
@@ -14,17 +15,21 @@ export function MapMetaPanel(): JSX.Element {
 
   const [urlDraft, setUrlDraft] = useState(mapConfig?.map.backgroundImageUrl ?? '');
   const [scaleDraft, setScaleDraft] = useState(String(mapConfig?.map.scale ?? 1));
+  const [localFileName, setLocalFileName] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setUrlDraft(mapConfig?.map.backgroundImageUrl ?? '');
+    const url = mapConfig?.map.backgroundImageUrl ?? '';
+    setUrlDraft(url);
+    if (!url.startsWith('blob:')) setLocalFileName(null);
   }, [mapConfig?.map.backgroundImageUrl]);
 
   useEffect(() => {
     setScaleDraft(String(mapConfig?.map.scale ?? 1));
   }, [mapConfig?.map.scale]);
 
-  function commitUrl(): void {
-    const trimmed = urlDraft.trim();
+  function applyUrl(url: string): void {
+    const trimmed = url.trim();
     if (!trimmed) return;
     if (!mapConfig) {
       const defaultMeta: MapMeta = { backgroundImageUrl: trimmed, center: { x: 0, y: 0 }, scale: 1 };
@@ -32,6 +37,23 @@ export function MapMetaPanel(): JSX.Element {
     } else {
       updateMapMeta({ backgroundImageUrl: trimmed });
     }
+  }
+
+  function commitUrl(): void {
+    applyUrl(urlDraft);
+  }
+
+  function onFileChange(e: React.ChangeEvent<HTMLInputElement>): void {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const prev = mapConfig?.map.backgroundImageUrl;
+    if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+    const url = URL.createObjectURL(file);
+    setUrlDraft(url);
+    setLocalFileName(file.name);
+    applyUrl(url);
+    // Reset input so the same file can be re-picked
+    e.target.value = '';
   }
 
   function commitScale(): void {
@@ -46,18 +68,42 @@ export function MapMetaPanel(): JSX.Element {
   }
 
   const isSettingCenter = activeTool === 'setCenter';
+  const displayValue = localFileName ?? urlDraft;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-      <TextField
-        label="Background Image URL"
+      <Box>
+        <TextField
+          label="Background Image"
+          size="small"
+          fullWidth
+          value={displayValue}
+          onChange={(e) => { setLocalFileName(null); setUrlDraft(e.target.value); }}
+          onBlur={commitUrl}
+          onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+          placeholder="https://…/map.png or pick a file"
+        />
+        {localFileName && (
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25 }}>
+            Local file — session only
+          </Typography>
+        )}
+      </Box>
+
+      <Button
+        variant="outlined"
         size="small"
         fullWidth
-        value={urlDraft}
-        onChange={(e) => setUrlDraft(e.target.value)}
-        onBlur={commitUrl}
-        onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
-        placeholder="https://…/map.png"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        Browse local file…
+      </Button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,.svg"
+        style={{ display: 'none' }}
+        onChange={onFileChange}
       />
 
       <TextField

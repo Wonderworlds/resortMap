@@ -8,6 +8,7 @@ import NearMeIcon from '@mui/icons-material/NearMe';
 import AddLocationIcon from '@mui/icons-material/AddLocation';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import StraightenIcon from '@mui/icons-material/Straighten';
+import PanToolIcon from '@mui/icons-material/PanTool';
 import { useMapStore } from '../store/mapStore';
 import type { ActiveTool } from '../store/mapStore';
 import { MapMetaPanel } from './MapMetaPanel';
@@ -19,6 +20,7 @@ const TOOL_BUTTONS: { value: ActiveTool; label: string; Icon: React.ComponentTyp
   { value: 'placePoi', label: 'Place POI', Icon: AddLocationIcon },
   { value: 'drawStreet', label: 'Draw Street', Icon: TimelineIcon },
   { value: 'setScale', label: 'Set Scale', Icon: StraightenIcon },
+  { value: 'pan', label: 'Pan', Icon: PanToolIcon },
 ];
 
 export function LeftPanel(): JSX.Element {
