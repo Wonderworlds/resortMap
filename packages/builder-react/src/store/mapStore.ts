@@ -47,6 +47,10 @@ interface MapStore {
   updateMapMeta: (patch: Partial<MapMeta>) => void;
   savedMapConfig: MapConfig | null;
   setSavedMapConfig: (config: MapConfig | null) => void;
+  highlightedPoiId: string | null;
+  setHighlightedPoiId: (id: string | null) => void;
+  panTargetPoiId: string | null;
+  setPanTargetPoiId: (id: string | null) => void;
 }
 
 export const useMapStore = create<MapStore>()((set) => ({
@@ -56,6 +60,8 @@ export const useMapStore = create<MapStore>()((set) => ({
   undoStack: [],
   redoStack: [],
   savedMapConfig: null,
+  highlightedPoiId: null,
+  panTargetPoiId: null,
 
   setActiveTool: (tool) => set({ activeTool: tool }),
 
@@ -215,4 +221,7 @@ export const useMapStore = create<MapStore>()((set) => ({
     }),
 
   setSavedMapConfig: (config) => set({ savedMapConfig: config }),
+
+  setHighlightedPoiId: (id) => set({ highlightedPoiId: id }),
+  setPanTargetPoiId: (id) => set({ panTargetPoiId: id }),
 }));

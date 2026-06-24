@@ -16,6 +16,8 @@ beforeEach(() => {
     undoStack: [],
     redoStack: [],
     savedMapConfig: null,
+    highlightedPoiId: null,
+    panTargetPoiId: null,
   });
 });
 
@@ -408,5 +410,39 @@ describe('savedMapConfig', () => {
     useMapStore.getState().setSavedMapConfig(config);
     useMapStore.getState().setSavedMapConfig(null);
     expect(useMapStore.getState().savedMapConfig).toBeNull();
+  });
+});
+
+describe('highlightedPoiId', () => {
+  test('initial state is null', () => {
+    expect(useMapStore.getState().highlightedPoiId).toBeNull();
+  });
+
+  test('setHighlightedPoiId sets an id', () => {
+    useMapStore.getState().setHighlightedPoiId('poi-abc');
+    expect(useMapStore.getState().highlightedPoiId).toBe('poi-abc');
+  });
+
+  test('setHighlightedPoiId(null) clears the id', () => {
+    useMapStore.getState().setHighlightedPoiId('poi-abc');
+    useMapStore.getState().setHighlightedPoiId(null);
+    expect(useMapStore.getState().highlightedPoiId).toBeNull();
+  });
+});
+
+describe('panTargetPoiId', () => {
+  test('initial state is null', () => {
+    expect(useMapStore.getState().panTargetPoiId).toBeNull();
+  });
+
+  test('setPanTargetPoiId sets an id', () => {
+    useMapStore.getState().setPanTargetPoiId('poi-xyz');
+    expect(useMapStore.getState().panTargetPoiId).toBe('poi-xyz');
+  });
+
+  test('setPanTargetPoiId(null) clears the id', () => {
+    useMapStore.getState().setPanTargetPoiId('poi-xyz');
+    useMapStore.getState().setPanTargetPoiId(null);
+    expect(useMapStore.getState().panTargetPoiId).toBeNull();
   });
 });

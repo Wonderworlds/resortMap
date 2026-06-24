@@ -42,6 +42,9 @@ export function MapCanvas(): JSX.Element {
   const setSelectedItemId = useMapStore((s) => s.setSelectedItemId);
   const setActiveTool = useMapStore((s) => s.setActiveTool);
   const updateMapMeta = useMapStore((s) => s.updateMapMeta);
+  const highlightedPoiId = useMapStore((s) => s.highlightedPoiId);
+  const panTargetPoiId = useMapStore((s) => s.panTargetPoiId);
+  const setPanTargetPoiId = useMapStore((s) => s.setPanTargetPoiId);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [imageSize, setImageSize] = useState<{ w: number; h: number } | null>(null);
@@ -140,6 +143,25 @@ export function MapCanvas(): JSX.Element {
       setShowScaleDialog(false);
     }
   }, [activeTool]);
+
+  useEffect(() => {
+    if (!panTargetPoiId) return;
+    if (!imageSize || !mapConfig) {
+      setPanTargetPoiId(null);
+      return;
+    }
+    const poi = mapConfig.pois.find((p) => p.id === panTargetPoiId);
+    setPanTargetPoiId(null);
+    if (!poi) return;
+    const vs = viewStateRef.current;
+    const viewW = imageSize.w / vs.scale;
+    const viewH = imageSize.h / vs.scale;
+    setViewState((prev) => ({
+      ...prev,
+      x: poi.position.x - viewW / 2,
+      y: poi.position.y - viewH / 2,
+    }));
+  }, [panTargetPoiId, imageSize, mapConfig, setPanTargetPoiId]);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent): void {
@@ -474,6 +496,7 @@ export function MapCanvas(): JSX.Element {
             key={poi.id}
             poi={poi}
             isSelected={poi.id === selectedItemId}
+            isHighlighted={poi.id === highlightedPoiId}
             isChainEnd={streetLastNodeId !== null && streetLastNodeId === poi.nodeId}
             onPointerDown={(e) => onPinPointerDown(e, poi.id)}
           />
@@ -607,16 +630,20 @@ function RoadNode({ node, isSelected, isChainEnd, onPointerDown }: RoadNodeProps
 interface PoiPinProps {
   poi: POI;
   isSelected: boolean;
+  isHighlighted: boolean;
   isChainEnd: boolean;
   onPointerDown: (e: React.PointerEvent<SVGGElement>) => void;
 }
 
-function PoiPin({ poi, isSelected, isChainEnd, onPointerDown }: PoiPinProps): JSX.Element {
+function PoiPin({ poi, isSelected, isHighlighted, isChainEnd, onPointerDown }: PoiPinProps): JSX.Element {
   const { x, y } = poi.position;
   return (
     <g data-poi-id={poi.id} onPointerDown={onPointerDown} cursor="pointer">
       {isChainEnd && (
         <circle cx={x} cy={y} r={15} fill="none" stroke="#f59e0b" strokeWidth={3} />
+      )}
+      {isHighlighted && (
+        <circle cx={x} cy={y} r={16} fill="none" stroke="#0891b2" strokeWidth={2.5} />
       )}
       <circle
         cx={x} cy={y} r={10}

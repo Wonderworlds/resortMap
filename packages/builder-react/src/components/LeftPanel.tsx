@@ -15,6 +15,7 @@ import PanToolIcon from '@mui/icons-material/PanTool';
 import { useMapStore } from '../store/mapStore';
 import type { ActiveTool } from '../store/mapStore';
 import { MapMetaPanel } from './MapMetaPanel';
+import { PoiList } from './PoiList';
 
 const DRAWER_WIDTH = 240;
 
@@ -124,9 +125,7 @@ export function LeftPanel(): JSX.Element {
           </Box>
         )}
 
-        {activeTab === 1 && (
-          <Box sx={{ flex: 1 }} />
-        )}
+        {activeTab === 1 && <PoiList />}
       </Box>
     </Drawer>
   );
