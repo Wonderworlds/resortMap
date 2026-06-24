@@ -51,12 +51,13 @@ export function RightPanel(): JSX.Element {
           position: 'fixed',
           zIndex: (theme) => theme.zIndex.drawer + 1,
           overflowY: 'auto',
+          bgcolor: 'background.paper',
         },
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1 }}>
-        <Typography variant="h6">{panelTitle}</Typography>
-        <IconButton onClick={closePanel} size="small">
+        <Typography variant="subtitle2">{panelTitle}</Typography>
+        <IconButton onClick={closePanel} size="small" aria-label="Close panel">
           <ChevronRightIcon />
         </IconButton>
       </Box>
@@ -117,6 +118,7 @@ function PoiEditor({ poi, updatePoi }: PoiEditorProps): JSX.Element {
         label="Label"
         fullWidth
         size="small"
+        variant="outlined"
         value={labelDraft}
         onChange={(e) => setLabelDraft(e.target.value)}
         onBlur={commitLabel}
@@ -139,6 +141,7 @@ function PoiEditor({ poi, updatePoi }: PoiEditorProps): JSX.Element {
           label="Add tag"
           size="small"
           fullWidth
+          variant="outlined"
           value={newTag}
           onChange={(e) => setNewTag(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
@@ -187,6 +190,7 @@ function PoiEditor({ poi, updatePoi }: PoiEditorProps): JSX.Element {
         label="Node ID"
         fullWidth
         size="small"
+        variant="outlined"
         value={nodeIdDraft}
         onChange={(e) => setNodeIdDraft(e.target.value)}
         onBlur={commitNodeId}
@@ -196,6 +200,7 @@ function PoiEditor({ poi, updatePoi }: PoiEditorProps): JSX.Element {
       <FormControlLabel
         control={
           <Switch
+            color="primary"
             size="small"
             checked={poi.locked ?? false}
             onChange={(e) => updatePoi(poi.id, { locked: e.target.checked })}
@@ -228,9 +233,9 @@ function NodeInfo({ node, updateNode }: NodeInfoProps): JSX.Element {
         <Typography variant="subtitle2" sx={{ mb: 0.5 }}>ID</Typography>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
           <Typography
+            variant="caption"
             sx={{
-              fontFamily: 'monospace',
-              fontSize: 11,
+              fontFamily: "'Courier New', monospace",
               wordBreak: 'break-all',
               flex: 1,
             }}
@@ -252,6 +257,7 @@ function NodeInfo({ node, updateNode }: NodeInfoProps): JSX.Element {
       <FormControlLabel
         control={
           <Switch
+            color="primary"
             size="small"
             checked={node.locked ?? false}
             onChange={(e) => updateNode(node.id, { locked: e.target.checked })}

@@ -18,7 +18,7 @@ export function CenterCanvas(): JSX.Element {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', minWidth: 0 }}>
       <Box
         sx={{
           display: 'flex',
