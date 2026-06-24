@@ -195,6 +195,7 @@ function validatePoi(raw: unknown, index: number): POI {
 
   if (typeof obj['icon'] === 'string') poi.icon = obj['icon'];
   if (typeof obj['nodeId'] === 'string') poi.nodeId = obj['nodeId'];
+  if (typeof obj['locked'] === 'boolean') poi.locked = obj['locked'];
   // Preserve meta as-is (ADR-006: unknown fields inside POI.meta are preserved)
   if (typeof obj['meta'] === 'object' && obj['meta'] !== null && !Array.isArray(obj['meta'])) {
     poi.meta = obj['meta'] as Record<string, unknown>;
@@ -218,7 +219,9 @@ function validateGraphNode(raw: unknown, index: number): GraphNode {
     );
   }
   const position = validatePosition(obj['position'], `graph.nodes[${index}].position`);
-  return { id: obj['id'], position };
+  const node: GraphNode = { id: obj['id'], position };
+  if (typeof obj['locked'] === 'boolean') node.locked = obj['locked'];
+  return node;
 }
 
 function validateGraphEdge(raw: unknown, index: number, nodeIdSet: Set<string>): GraphEdge {

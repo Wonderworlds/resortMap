@@ -16,12 +16,14 @@ export interface POI {
   tags: string[];
   icon?: string;
   nodeId?: string;
+  locked?: boolean;
   meta?: Record<string, unknown>;
 }
 
 export interface GraphNode {
   id: string;
   position: Position;
+  locked?: boolean;
 }
 
 export interface GraphEdge {

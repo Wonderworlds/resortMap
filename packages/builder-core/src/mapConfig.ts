@@ -1,5 +1,7 @@
-import type { MapConfig, MapMeta, POI, GraphNode, GraphEdge } from '@resort-map/types';
+import type { MapConfig, MapMeta, POI, GraphNode, GraphEdge, Position } from '@resort-map/types';
 import { generateId } from './utils/idGeneration';
+
+export const POI_NODE_SNAP_RADIUS = 12;
 
 export function createMapConfig(meta: MapMeta): MapConfig {
   return {
@@ -10,9 +12,35 @@ export function createMapConfig(meta: MapMeta): MapConfig {
   };
 }
 
-export function addPoi(config: MapConfig, poi: Omit<POI, 'id'>): MapConfig {
-  const newPoi: POI = { ...poi, id: generateId() };
-  return { ...config, pois: [...config.pois, newPoi] };
+export function addPoi(
+  config: MapConfig,
+  poi: Omit<POI, 'id'>,
+  snapRadius = POI_NODE_SNAP_RADIUS,
+): MapConfig {
+  // Find the closest existing node within snap radius
+  let closestNode: GraphNode | undefined;
+  let closestDist = Infinity;
+  for (const node of config.graph.nodes) {
+    const dx = node.position.x - poi.position.x;
+    const dy = node.position.y - poi.position.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist <= snapRadius && dist < closestDist) {
+      closestNode = node;
+      closestDist = dist;
+    }
+  }
+
+  let baseConfig = config;
+  let nodeId: string;
+  if (closestNode) {
+    nodeId = closestNode.id;
+  } else {
+    baseConfig = addNode(config, { position: poi.position });
+    nodeId = baseConfig.graph.nodes[baseConfig.graph.nodes.length - 1]!.id;
+  }
+
+  const newPoi: POI = { ...poi, id: generateId(), nodeId };
+  return { ...baseConfig, pois: [...baseConfig.pois, newPoi] };
 }
 
 export function removePoi(config: MapConfig, poiId: string): MapConfig {
@@ -28,6 +56,32 @@ export function updatePoi(
     ...config,
     pois: config.pois.map(p => (p.id === poiId ? { ...p, ...patch } : p)),
   };
+}
+
+export function updateNode(
+  config: MapConfig,
+  nodeId: string,
+  patch: Partial<Omit<GraphNode, 'id'>>,
+): MapConfig {
+  return {
+    ...config,
+    graph: {
+      ...config.graph,
+      nodes: config.graph.nodes.map((n) => (n.id === nodeId ? { ...n, ...patch } : n)),
+    },
+  };
+}
+
+export function updateNodePosition(config: MapConfig, nodeId: string, position: Position): MapConfig {
+  return updateNode(config, nodeId, { position });
+}
+
+export function movePoiWithNode(config: MapConfig, poiId: string, position: Position): MapConfig {
+  const poi = config.pois.find((p) => p.id === poiId);
+  if (!poi) return config;
+  let result = updatePoi(config, poiId, { position });
+  if (poi.nodeId) result = updateNodePosition(result, poi.nodeId, position);
+  return result;
 }
 
 export function addNode(config: MapConfig, node: Omit<GraphNode, 'id'>): MapConfig {

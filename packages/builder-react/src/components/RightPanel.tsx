@@ -7,6 +7,8 @@ import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
@@ -19,6 +21,8 @@ export function RightPanel(): JSX.Element {
   const selectedItemId = useMapStore((s) => s.selectedItemId);
   const setSelectedItemId = useMapStore((s) => s.setSelectedItemId);
   const updatePoi = useMapStore((s) => s.updatePoi);
+
+  const updateNode = useMapStore((s) => s.updateNode);
 
   const open = selectedItemId !== null;
 
@@ -63,7 +67,7 @@ export function RightPanel(): JSX.Element {
         {selectedPoi ? (
           <PoiEditor poi={selectedPoi} updatePoi={updatePoi} />
         ) : selectedNode ? (
-          <NodeInfo node={selectedNode} />
+          <NodeInfo node={selectedNode} updateNode={updateNode} />
         ) : null}
       </Box>
     </Drawer>
@@ -188,15 +192,27 @@ function PoiEditor({ poi, updatePoi }: PoiEditorProps): JSX.Element {
         onBlur={commitNodeId}
         placeholder="Link to graph node…"
       />
+
+      <FormControlLabel
+        control={
+          <Switch
+            size="small"
+            checked={poi.locked ?? false}
+            onChange={(e) => updatePoi(poi.id, { locked: e.target.checked })}
+          />
+        }
+        label="Lock position"
+      />
     </Box>
   );
 }
 
 interface NodeInfoProps {
   node: GraphNode;
+  updateNode: (nodeId: string, patch: Partial<Omit<GraphNode, 'id'>>) => void;
 }
 
-function NodeInfo({ node }: NodeInfoProps): JSX.Element {
+function NodeInfo({ node, updateNode }: NodeInfoProps): JSX.Element {
   const [copied, setCopied] = useState(false);
 
   function copyId(): void {
@@ -232,6 +248,17 @@ function NodeInfo({ node }: NodeInfoProps): JSX.Element {
       <Typography variant="body2">
         Position: ({node.position.x}, {node.position.y})
       </Typography>
+
+      <FormControlLabel
+        control={
+          <Switch
+            size="small"
+            checked={node.locked ?? false}
+            onChange={(e) => updateNode(node.id, { locked: e.target.checked })}
+          />
+        }
+        label="Lock position"
+      />
     </Box>
   );
 }

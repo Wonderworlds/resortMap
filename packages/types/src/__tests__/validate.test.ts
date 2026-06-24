@@ -89,6 +89,60 @@ describe('validateGwmap — happy path', () => {
     expect(result.pois[0]?.icon).toBeUndefined();
     expect(result.pois[0]?.nodeId).toBeUndefined();
     expect(result.pois[0]?.meta).toBeUndefined();
+    expect(result.pois[0]?.locked).toBeUndefined();
+  });
+
+  test('preserves locked: true on poi', () => {
+    const input = {
+      ...makeValidBase(),
+      pois: [{ id: 'poi-1', label: 'Locked', position: { x: 0, y: 0 }, tags: [], locked: true }],
+    };
+    const result = validateGwmap(input);
+    expect(result.pois[0]?.locked).toBe(true);
+  });
+
+  test('preserves locked: false on poi', () => {
+    const input = {
+      ...makeValidBase(),
+      pois: [{ id: 'poi-1', label: 'Unlocked', position: { x: 0, y: 0 }, tags: [], locked: false }],
+    };
+    const result = validateGwmap(input);
+    expect(result.pois[0]?.locked).toBe(false);
+  });
+
+  test('ignores non-boolean locked value on poi', () => {
+    const input = {
+      ...makeValidBase(),
+      pois: [{ id: 'poi-1', label: 'Test', position: { x: 0, y: 0 }, tags: [], locked: 'yes' }],
+    };
+    const result = validateGwmap(input);
+    expect(result.pois[0]?.locked).toBeUndefined();
+  });
+
+  test('preserves locked: true on graph node', () => {
+    const input = {
+      ...makeValidBase(),
+      graph: {
+        nodes: [{ id: 'n1', position: { x: 10, y: 20 }, locked: true }],
+        edges: [],
+      },
+    };
+    const result = validateGwmap(input);
+    expect(result.graph.nodes[0]?.locked).toBe(true);
+  });
+
+  test('locked is undefined on graph node when not present', () => {
+    const result = validateGwmap(makeValidBase());
+    // makeValidBase has no nodes but if it did they wouldn't have locked
+    const input = {
+      ...makeValidBase(),
+      graph: {
+        nodes: [{ id: 'n1', position: { x: 10, y: 20 } }],
+        edges: [],
+      },
+    };
+    const r = validateGwmap(input);
+    expect(r.graph.nodes[0]?.locked).toBeUndefined();
   });
 });
 

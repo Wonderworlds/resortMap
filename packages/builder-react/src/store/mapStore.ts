@@ -1,11 +1,14 @@
 import { create } from 'zustand';
-import type { MapConfig, MapMeta, POI, GraphNode, GraphEdge } from '@resort-map/types';
+import type { MapConfig, MapMeta, POI, GraphNode, GraphEdge, Position } from '@resort-map/types';
 import {
   createMapConfig,
   addPoi as coreAddPoi,
   removePoi as coreRemovePoi,
   updatePoi as coreUpdatePoi,
+  movePoiWithNode as coreMovePoiWithNode,
   addNode as coreAddNode,
+  updateNode as coreUpdateNode,
+  updateNodePosition as coreUpdateNodePosition,
   removeNode as coreRemoveNode,
   addEdge as coreAddEdge,
   removeEdge as coreRemoveEdge,
@@ -34,7 +37,10 @@ interface MapStore {
   addPoi: (poi: Omit<POI, 'id'>) => void;
   removePoi: (poiId: string) => void;
   updatePoi: (poiId: string, patch: Partial<Omit<POI, 'id'>>) => void;
+  movePoi: (poiId: string, position: Position) => void;
   addNode: (node: Omit<GraphNode, 'id'>) => void;
+  updateNode: (nodeId: string, patch: Partial<Omit<GraphNode, 'id'>>) => void;
+  moveNode: (nodeId: string, position: Position) => void;
   removeNode: (nodeId: string) => void;
   addEdge: (edge: GraphEdge) => void;
   removeEdge: (from: string, to: string) => void;
@@ -112,11 +118,41 @@ export const useMapStore = create<MapStore>()((set) => ({
       };
     }),
 
+  movePoi: (poiId, position) =>
+    set((state) => {
+      if (!state.mapConfig) return {};
+      return {
+        mapConfig: coreMovePoiWithNode(state.mapConfig, poiId, position),
+        undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
+      };
+    }),
+
   addNode: (node) =>
     set((state) => {
       if (!state.mapConfig) return {};
       return {
         mapConfig: coreAddNode(state.mapConfig, node),
+        undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
+      };
+    }),
+
+  updateNode: (nodeId, patch) =>
+    set((state) => {
+      if (!state.mapConfig) return {};
+      return {
+        mapConfig: coreUpdateNode(state.mapConfig, nodeId, patch),
+        undoStack: pushUndo(state.undoStack, state.mapConfig),
+        redoStack: [],
+      };
+    }),
+
+  moveNode: (nodeId, position) =>
+    set((state) => {
+      if (!state.mapConfig) return {};
+      return {
+        mapConfig: coreUpdateNodePosition(state.mapConfig, nodeId, position),
         undoStack: pushUndo(state.undoStack, state.mapConfig),
         redoStack: [],
       };

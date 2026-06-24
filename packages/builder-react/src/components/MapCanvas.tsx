@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import type { POI, GraphNode, GraphEdge } from '@resort-map/types';
-import { updatePoi as coreUpdatePoi } from '@resort-map/builder-core';
+import { movePoiWithNode as coreMovePoiWithNode, updateNodePosition as coreUpdateNodePosition } from '@resort-map/builder-core';
 import { useMapStore } from '../store/mapStore';
 import { ScaleDialog } from './ScaleDialog';
 
-interface DragState {
-  poiId: string;
-  pointerId: number;
-}
+type DragState =
+  | { type: 'poi'; id: string; pointerId: number }
+  | { type: 'node'; id: string; pointerId: number };
 
 export function MapCanvas(): JSX.Element {
   const mapConfig = useMapStore((s) => s.mapConfig);
@@ -106,7 +105,7 @@ export function MapCanvas(): JSX.Element {
     if (!pos) return;
 
     if (activeTool === 'placePoi') {
-      addPoi({ label: 'New POI', position: pos, tags: [] });
+      addPoi({ label: 'New POI', position: pos, tags: [], locked: true });
       const newPois = useMapStore.getState().mapConfig!.pois;
       const newId = newPois[newPois.length - 1]!.id;
       setSelectedItemId(newId);
@@ -142,8 +141,11 @@ export function MapCanvas(): JSX.Element {
     if (dragState && imageSize) {
       const currentConfig = useMapStore.getState().mapConfig;
       if (!currentConfig) return;
-      const newConfig = coreUpdatePoi(currentConfig, dragState.poiId, { position: pos });
-      useMapStore.setState({ mapConfig: newConfig });
+      if (dragState.type === 'poi') {
+        useMapStore.setState({ mapConfig: coreMovePoiWithNode(currentConfig, dragState.id, pos) });
+      } else {
+        useMapStore.setState({ mapConfig: coreUpdateNodePosition(currentConfig, dragState.id, pos) });
+      }
     }
   }
 
@@ -156,7 +158,11 @@ export function MapCanvas(): JSX.Element {
     svgRef.current?.releasePointerCapture(e.pointerId);
     const pos = clientToSvg(e.clientX, e.clientY);
     if (pos) {
-      useMapStore.getState().updatePoi(dragState.poiId, { position: pos });
+      if (dragState.type === 'poi') {
+        useMapStore.getState().movePoi(dragState.id, pos);
+      } else {
+        useMapStore.getState().moveNode(dragState.id, pos);
+      }
     }
     setDragState(null);
   }
@@ -165,9 +171,20 @@ export function MapCanvas(): JSX.Element {
     e.stopPropagation();
     if (activeTool === 'select') {
       setSelectedItemId(poiId);
-      const pointerId = e.pointerId;
-      setDragState({ poiId, pointerId });
-      svgRef.current?.setPointerCapture(pointerId);
+      const poi = mapConfig.pois.find((p) => p.id === poiId);
+      if (!poi?.locked) {
+        const pointerId = e.pointerId;
+        setDragState({ type: 'poi', id: poiId, pointerId });
+        svgRef.current?.setPointerCapture(pointerId);
+      }
+    } else if (activeTool === 'drawStreet') {
+      const poi = mapConfig.pois.find((p) => p.id === poiId);
+      if (!poi?.nodeId) return;
+      if (streetLastNodeId && streetLastNodeId !== poi.nodeId) {
+        addEdge({ from: streetLastNodeId, to: poi.nodeId });
+      }
+      setStreetLastNodeId(poi.nodeId);
+      setSelectedItemId(poiId);
     }
   }
 
@@ -175,6 +192,12 @@ export function MapCanvas(): JSX.Element {
     e.stopPropagation();
     if (activeTool === 'select') {
       setSelectedItemId(nodeId);
+      const node = mapConfig.graph.nodes.find((n) => n.id === nodeId);
+      if (!node?.locked) {
+        const pointerId = e.pointerId;
+        setDragState({ type: 'node', id: nodeId, pointerId });
+        svgRef.current?.setPointerCapture(pointerId);
+      }
     } else if (activeTool === 'drawStreet') {
       if (streetLastNodeId && streetLastNodeId !== nodeId) {
         addEdge({ from: streetLastNodeId, to: nodeId });
@@ -315,20 +338,23 @@ export function MapCanvas(): JSX.Element {
             />
           );
         })}
-        {mapConfig.graph.nodes.map((node) => (
-          <RoadNode
-            key={node.id}
-            node={node}
-            isSelected={selectedItemId === node.id}
-            isChainEnd={streetLastNodeId === node.id}
-            onPointerDown={(e) => onNodePointerDown(e, node.id)}
-          />
-        ))}
+        {mapConfig.graph.nodes
+          .filter((node) => !mapConfig.pois.some((p) => p.nodeId === node.id))
+          .map((node) => (
+            <RoadNode
+              key={node.id}
+              node={node}
+              isSelected={selectedItemId === node.id}
+              isChainEnd={streetLastNodeId === node.id}
+              onPointerDown={(e) => onNodePointerDown(e, node.id)}
+            />
+          ))}
         {mapConfig.pois.map((poi) => (
           <PoiPin
             key={poi.id}
             poi={poi}
             isSelected={poi.id === selectedItemId}
+            isChainEnd={streetLastNodeId !== null && streetLastNodeId === poi.nodeId}
             onPointerDown={(e) => onPinPointerDown(e, poi.id)}
           />
         ))}
@@ -432,7 +458,8 @@ function RoadNode({ node, isSelected, isChainEnd, onPointerDown }: RoadNodeProps
         height={12}
         fill={isSelected ? '#f97316' : '#6b7280'}
         stroke={isSelected ? '#ea580c' : '#374151'}
-        strokeWidth={2}
+        strokeWidth={node.locked ? 2.5 : 2}
+        strokeDasharray={node.locked ? '3 1.5' : undefined}
         rx={2}
       />
     </g>
@@ -442,19 +469,25 @@ function RoadNode({ node, isSelected, isChainEnd, onPointerDown }: RoadNodeProps
 interface PoiPinProps {
   poi: POI;
   isSelected: boolean;
+  isChainEnd: boolean;
   onPointerDown: (e: React.PointerEvent<SVGGElement>) => void;
 }
 
-function PoiPin({ poi, isSelected, onPointerDown }: PoiPinProps): JSX.Element {
+function PoiPin({ poi, isSelected, isChainEnd, onPointerDown }: PoiPinProps): JSX.Element {
+  const { x, y } = poi.position;
   return (
     <g data-poi-id={poi.id} onPointerDown={onPointerDown} cursor="pointer">
+      {isChainEnd && (
+        <circle cx={x} cy={y} r={15} fill="none" stroke="#f59e0b" strokeWidth={3} />
+      )}
       <circle
-        cx={poi.position.x}
-        cy={poi.position.y}
+        cx={x}
+        cy={y}
         r={10}
         fill={isSelected ? '#2563eb' : '#ef4444'}
         stroke={isSelected ? '#1d4ed8' : '#b91c1c'}
-        strokeWidth={2}
+        strokeWidth={poi.locked ? 3 : 2}
+        strokeDasharray={poi.locked ? '4 2' : undefined}
       />
     </g>
   );
