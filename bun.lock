@@ -29,6 +29,7 @@
         "@resort-map/builder-core": "workspace:*",
         "@resort-map/poi-icons": "workspace:*",
         "@resort-map/types": "workspace:*",
+        "@resort-map/view-react": "workspace:*",
         "zustand": "catalog:",
       },
       "devDependencies": {

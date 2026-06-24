@@ -2,8 +2,8 @@ import { useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import { ThemeProvider } from '@mui/material/styles';
 import { AppBar } from './components/AppBar';
+import { CenterCanvas } from './components/CenterCanvas';
 import { LeftPanel } from './components/LeftPanel';
-import { MapCanvas } from './components/MapCanvas';
 import { RightPanel } from './components/RightPanel';
 import { useMapStore } from './store/mapStore';
 import { createAppTheme } from './theme';
@@ -45,9 +45,7 @@ export function App({ themeConfig, onSave, onQuit }: AppProps): JSX.Element {
         <AppBar onSave={onSave} onQuit={onQuit} />
         <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
           <LeftPanel />
-          <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-            <MapCanvas />
-          </Box>
+          <CenterCanvas />
         </Box>
         {/* RightPanel uses position:fixed, so it sits outside the flex row */}
         <RightPanel />
