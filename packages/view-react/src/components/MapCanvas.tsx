@@ -12,6 +12,7 @@ export interface MapCanvasProps {
   selectedPoiId?: string | null;
   onRouteRequest?: (fromId: string, toId: string) => void;
   route?: Route | null;
+  preview?: boolean;
 }
 
 const MIN_SCALE = 0.5;
@@ -21,9 +22,39 @@ interface PoiPinProps {
   poi: POI;
   isSelected: boolean;
   onClick: () => void;
+  preview?: boolean;
 }
 
-function PoiPin({ poi, isSelected, onClick }: PoiPinProps) {
+function PoiPin({ poi, isSelected, onClick, preview }: PoiPinProps) {
+  if (preview) {
+    return (
+      <g data-poi-id={poi.id} style={{ pointerEvents: 'none' }}>
+        <circle
+          cx={poi.position.x}
+          cy={poi.position.y}
+          r={8}
+          fill={isSelected ? '#ff4444' : '#3b82f6'}
+          stroke="white"
+          strokeWidth={2}
+        />
+        {isSelected && (
+          <text
+            x={poi.position.x}
+            y={poi.position.y - 14}
+            textAnchor="middle"
+            fontSize={12}
+            fill="#1a1a1a"
+            stroke="white"
+            strokeWidth={3}
+            paintOrder="stroke"
+          >
+            {poi.label}
+          </text>
+        )}
+      </g>
+    );
+  }
+
   return (
     <g
       data-poi-id={poi.id}
@@ -65,6 +96,7 @@ export function MapCanvas({
   selectedPoiId = null,
   onRouteRequest,
   route = null,
+  preview,
 }: MapCanvasProps) {
   const [transform, setTransform] = useState({ tx: 0, ty: 0, scale: 1 });
   const isPanningRef = useRef(false);
@@ -172,13 +204,14 @@ export function MapCanvas({
             overflow: 'visible',
           }}
         >
-          {route && <RoutePath route={route} />}
+          {!preview && route && <RoutePath route={route} />}
           {filteredPois.map(poi => (
             <PoiPin
               key={poi.id}
               poi={poi}
               isSelected={selectedPoiId === poi.id}
               onClick={() => handlePoiClick(poi.id)}
+              preview={preview}
             />
           ))}
         </svg>

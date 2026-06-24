@@ -110,8 +110,8 @@ development_status:
   # ──────────────────────────────────────────────────────────────────
   # Epic 7: Builder React — Full UI/UX Redesign (Mosaico-style)
   # ──────────────────────────────────────────────────────────────────
-  epic-7: backlog
-  7-1-view-react-preview-prop: backlog
+  epic-7: in-progress
+  7-1-view-react-preview-prop: review
   7-2-mui-theme-system-and-themeconfig-prop: backlog
   7-3-top-nav-bar-save-export-undo-redo-quit: backlog
   7-4-left-panel-two-tab-shell-tools-tab-map-config: backlog

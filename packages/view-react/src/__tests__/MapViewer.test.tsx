@@ -38,4 +38,27 @@ describe('MapViewer', () => {
       expect(screen.getByTestId('filter-panel')).toBeDefined();
     });
   });
+
+  test('does not render FilterPanel when preview={true}', async () => {
+    render(<MapViewer source={config} preview={true} />);
+    await waitFor(() => {
+      expect(screen.getByTestId('map-canvas')).toBeDefined();
+    });
+    expect(document.querySelector('[data-testid="filter-panel"]')).toBeNull();
+  });
+
+  test('renders preview badge when preview={true}', async () => {
+    render(<MapViewer source={config} preview={true} />);
+    await waitFor(() => {
+      expect(screen.getByTestId('preview-badge')).toBeDefined();
+    });
+  });
+
+  test('does not render preview badge when preview is absent', async () => {
+    render(<MapViewer source={config} />);
+    await waitFor(() => {
+      expect(screen.getByTestId('map-canvas')).toBeDefined();
+    });
+    expect(document.querySelector('[data-testid="preview-badge"]')).toBeNull();
+  });
 });

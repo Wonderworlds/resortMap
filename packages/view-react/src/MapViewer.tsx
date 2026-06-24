@@ -8,9 +8,10 @@ export interface MapViewerProps {
   onStatusChange?: (status: ViewerStatus) => void;
   onRouteRequest?: (fromId: string, toId: string) => void;
   onFilterChange?: (options: PoiFilterOptions) => void;
+  preview?: boolean;
 }
 
-export function MapViewer({ source, onRouteRequest, onFilterChange }: MapViewerProps) {
+export function MapViewer({ source, onRouteRequest, onFilterChange, preview }: MapViewerProps) {
   const { state, dispatch } = useMapViewer(source);
 
   if (state.status === 'error') {
@@ -28,13 +29,35 @@ export function MapViewer({ source, onRouteRequest, onFilterChange }: MapViewerP
           selectedPoiId={state.selectedPoiId}
           onRouteRequest={onRouteRequest}
           route={state.route}
+          preview={preview}
         />
-        <FilterPanel
-          mapConfig={state.mapConfig}
-          filterOptions={state.filterOptions}
-          dispatch={dispatch}
-          onFilterChange={onFilterChange}
-        />
+        {!preview && (
+          <FilterPanel
+            mapConfig={state.mapConfig}
+            filterOptions={state.filterOptions}
+            dispatch={dispatch}
+            onFilterChange={onFilterChange}
+          />
+        )}
+        {preview && (
+          <div
+            data-testid="preview-badge"
+            style={{
+              position: 'absolute',
+              bottom: 8,
+              left: 8,
+              background: 'rgba(0,0,0,0.55)',
+              color: '#fff',
+              fontSize: 11,
+              padding: '2px 8px',
+              borderRadius: 12,
+              pointerEvents: 'none',
+              zIndex: 10,
+            }}
+          >
+            Preview
+          </div>
+        )}
       </div>
     );
   }

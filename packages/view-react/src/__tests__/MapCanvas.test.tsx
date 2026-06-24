@@ -166,6 +166,52 @@ describe('MapCanvas — POI Pins', () => {
   });
 });
 
+describe('MapCanvas — Preview Mode', () => {
+  let dispatchCalls: ViewerAction[];
+  let mockDispatch: (action: ViewerAction) => void;
+
+  beforeEach(() => {
+    dispatchCalls = [];
+    mockDispatch = (action: ViewerAction) => { dispatchCalls.push(action); };
+  });
+
+  test('POI pin does not dispatch SELECT_POI when preview={true}', () => {
+    render(
+      <MapCanvas
+        mapConfig={config}
+        imageSize={{ width: 1024, height: 800 }}
+        dispatch={mockDispatch}
+        filteredPois={config.pois}
+        preview={true}
+      />
+    );
+    const pin = document.querySelector('[data-poi-id="poi-001"]') as Element;
+    fireEvent.click(pin);
+    expect(dispatchCalls.filter(a => a.type === 'SELECT_POI')).toHaveLength(0);
+  });
+
+  test('does not render RoutePath when preview={true} and route is provided', () => {
+    const route: Route = {
+      nodes: [
+        { id: 'n1', position: { x: 100, y: 100 } },
+        { id: 'n2', position: { x: 200, y: 200 } },
+      ],
+      distanceMeters: 100,
+      walkTimeSeconds: 60,
+    };
+    render(
+      <MapCanvas
+        mapConfig={config}
+        imageSize={{ width: 1024, height: 800 }}
+        dispatch={mockDispatch}
+        route={route}
+        preview={true}
+      />
+    );
+    expect(document.querySelector('[data-testid="route-path"]')).toBeNull();
+  });
+});
+
 describe('MapCanvas — Route Path', () => {
   let dispatchCalls: ViewerAction[];
   let mockDispatch: (action: ViewerAction) => void;
