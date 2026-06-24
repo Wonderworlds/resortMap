@@ -106,3 +106,16 @@ development_status:
   6-3-left-panel: review
   6-4-right-panel-icon-picker: review
   epic-6-retrospective: done
+
+  # ──────────────────────────────────────────────────────────────────
+  # Epic 7: Builder React — Full UI/UX Redesign (Mosaico-style)
+  # ──────────────────────────────────────────────────────────────────
+  epic-7: backlog
+  7-1-view-react-preview-prop: backlog
+  7-2-mui-theme-system-and-themeconfig-prop: backlog
+  7-3-top-nav-bar-save-export-undo-redo-quit: backlog
+  7-4-left-panel-two-tab-shell-tools-tab-map-config: backlog
+  7-5-center-canvas-mode-toggle-bar-and-preview-mode: backlog
+  7-6-content-tab-poi-list-hover-highlight-bidirectional-sync: backlog
+  7-7-right-panel-restyling-and-responsive-layout: backlog
+  epic-7-retrospective: optional
